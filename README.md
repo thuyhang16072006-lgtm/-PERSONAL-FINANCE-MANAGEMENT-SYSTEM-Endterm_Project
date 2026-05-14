@@ -186,3 +186,8 @@ Then visit `http://localhost:3000/`.
 - Ensure MySQL is running and the connection information in `db_config.py` is correct.
 - For production, avoid using `allow_origins=["*"]` in CORS policy.
 - Use `Database.sql` to restore or recreate the project schema when needed.
+
+---
+
+## Presentation & App Demo
+YouTube link: https://youtu.be/3TfSTQen59w
