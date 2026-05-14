@@ -1,0 +1,16 @@
+# Core DB
+mysql-connector-python>=8.0
+
+# CLI reporting
+matplotlib>=3.7
+
+# FIX: Web framework to expose Python functions as JSON APIs
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+
+# FIX: Load credentials from .env file instead of hardcoding
+python-dotenv>=1.0.0
+
+# API validation
+pydantic>=2.0.0
+bcrypt==5.0.0

@@ -1,0 +1,3872 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MoneyMate</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
+  <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --G: #5a9e62;
+      --G2: #7ec489;
+      --G3: #b8e0c8;
+      --G4: #e8f5ec;
+      --R: #e84848;
+      --R2: #fff0f0;
+      --Y: #f59e0b;
+      --Y2: #fffbeb;
+      --txt: #111827;
+      --txt2: #6b7280;
+      --txt3: #9ca3af;
+      --bg: #f3f7f3;
+      --card: #fff;
+      --border: #e5e7eb;
+      --rmd: 12px;
+      --rlg: 18px;
+      --rxl: 24px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--txt);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased
+    }
+
+    .shell {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      max-width: 430px;
+      margin: 0 auto;
+      position: relative
+    }
+
+    .hdr {
+      background: linear-gradient(135deg, #3d7a46 0%, #5a9e62 60%, #7ec489 100%);
+      padding: 0 18px;
+      color: #fff;
+      flex-shrink: 0
+    }
+
+    .hdr-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0 10px
+    }
+
+    .logo {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .logo-dot {
+      width: 7px;
+      height: 7px;
+      background: #fff;
+      border-radius: 50%;
+      opacity: .6
+    }
+
+    .hdr-right {
+      text-align: right
+    }
+
+    .hdr-lbl {
+      font-size: 9px;
+      opacity: .7;
+      text-transform: uppercase;
+      letter-spacing: 1.2px
+    }
+
+    .hdr-bal {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1
+    }
+
+    .hdr-greet {
+      font-size: 12px;
+      opacity: .8;
+      padding-bottom: 14px
+    }
+
+    .bnav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: #fff;
+      border-top: 1px solid var(--border);
+      display: flex;
+      z-index: 200;
+      padding-bottom: env(safe-area-inset-bottom, 0)
+    }
+
+    .nb {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 2px 6px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--txt3);
+      font-size: 9px;
+      gap: 3px;
+      transition: color .2s;
+      letter-spacing: .3px
+    }
+
+    .nb.on {
+      color: var(--G)
+    }
+
+    .nb svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 1.7;
+      transition: stroke-width .2s
+    }
+
+    .nb.on svg {
+      stroke-width: 2.2
+    }
+
+    .pg {
+      padding: 14px 14px 80px;
+      overflow-y: auto;
+      flex: 1
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--rlg);
+      padding: 14px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border)
+    }
+
+    .card-hd {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px
+    }
+
+    .card-t {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--txt2);
+      text-transform: uppercase;
+      letter-spacing: .9px
+    }
+
+    .link {
+      font-size: 11px;
+      color: var(--G);
+      cursor: pointer;
+      font-weight: 600
+    }
+
+    .mnav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+      border-radius: 10px;
+      padding: 7px 12px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border)
+    }
+
+    .mnavb {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--txt2);
+      font-size: 17px;
+      line-height: 1;
+      padding: 0 2px
+    }
+
+    .mnavl {
+      font-size: 13px;
+      font-weight: 700
+    }
+
+    .sum3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0
+    }
+
+    .sum3-item {
+      text-align: center;
+      padding: 8px 4px
+    }
+
+    .sum3-item+.sum3-item {
+      border-left: 1px solid var(--border)
+    }
+
+    .sum3-lbl {
+      font-size: 9.5px;
+      color: var(--txt3);
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      margin-bottom: 3px
+    }
+
+    .sum3-val {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -.5px
+    }
+
+    .abanner {
+      border-radius: 10px;
+      padding: 9px 13px;
+      font-size: 12px;
+      margin-bottom: 10px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .a-ok {
+      background: #e6f7ec;
+      color: #166534;
+      border: 1px solid #bbf7d0
+    }
+
+    .a-warn {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a
+    }
+
+    .a-over {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca
+    }
+
+    .jgrid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+      margin-bottom: 10px
+    }
+
+    .jcard {
+      background: #fff;
+      border-radius: 11px;
+      padding: 8px 5px;
+      text-align: center;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      position: relative;
+      overflow: hidden
+    }
+
+    .jcard:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .08)
+    }
+
+    .jname {
+      font-size: 8.5px;
+      color: var(--txt2);
+      margin-bottom: 5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative
+    }
+
+    .jvial {
+      width: 26px;
+      height: 36px;
+      background: #f0f0f0;
+      border-radius: 5px;
+      margin: 0 auto 4px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid #ddd
+    }
+
+    .jwater {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-radius: 3px 3px 0 0;
+      transition: height .7s cubic-bezier(.4, 0, .2, 1), background .4s
+    }
+
+    .jpct {
+      font-size: 9.5px;
+      font-weight: 700;
+      position: relative
+    }
+
+    .txl {
+      display: flex;
+      flex-direction: column;
+      gap: 0
+    }
+
+    .txi {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid #f3f4f6;
+      cursor: pointer;
+      transition: background .15s
+    }
+
+    .txi:last-child {
+      border-bottom: none
+    }
+
+    .txi:hover {
+      background: #fafafa;
+      margin: 0 -4px;
+      padding-left: 4px;
+      padding-right: 4px;
+      border-radius: 8px
+    }
+
+    .txicon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0
+    }
+
+    .tinfo {
+      flex: 1;
+      min-width: 0
+    }
+
+    .tdesc {
+      font-size: 12.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .tmeta {
+      font-size: 10.5px;
+      color: var(--txt3)
+    }
+
+    .tamt {
+      font-size: 12.5px;
+      font-weight: 700;
+      flex-shrink: 0
+    }
+
+    .inc {
+      color: #16a34a
+    }
+
+    .expc {
+      color: var(--R)
+    }
+
+    .fgrp {
+      margin-bottom: 12px
+    }
+
+    .flbl {
+      font-size: 10.5px;
+      color: var(--txt2);
+      font-weight: 600;
+      margin-bottom: 5px;
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: .6px
+    }
+
+    .finp,
+    .fsel {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      font-size: 13.5px;
+      background: #fff;
+      color: var(--txt);
+      outline: none;
+      transition: border-color .2s;
+      -webkit-appearance: none
+    }
+
+    .finp:focus,
+    .fsel:focus {
+      border-color: var(--G)
+    }
+
+    .amtbig {
+      font-size: 32px;
+      font-weight: 800;
+      text-align: center;
+      border: none;
+      border-bottom: 2.5px solid var(--G);
+      border-radius: 0;
+      background: transparent;
+      width: 100%;
+      padding: 6px 0 8px;
+      outline: none;
+      letter-spacing: -1px;
+      color: var(--txt)
+    }
+
+    .amtbig::placeholder {
+      color: #d1d5db
+    }
+
+    .ttog {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px
+    }
+
+    .tbtn {
+      padding: 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all .2s;
+      color: var(--txt2)
+    }
+
+    .tbtn.ti {
+      background: #e6f7ec;
+      border-color: #16a34a;
+      color: #16a34a
+    }
+
+    .tbtn.te {
+      background: #fef2f2;
+      border-color: var(--R);
+      color: var(--R)
+    }
+
+    .sbtn {
+      width: 100%;
+      padding: 13px;
+      background: var(--G);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s;
+      margin-top: 6px;
+      letter-spacing: .2px
+    }
+
+    .sbtn:hover {
+      background: #3d7a46
+    }
+
+    .sbtn:disabled {
+      opacity: .5;
+      cursor: not-allowed
+    }
+
+    .sbtn-red {
+      width: 100%;
+      padding: 11px;
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1.5px solid #fecaca;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      margin-top: 8px
+    }
+
+    .sbtn-red:hover {
+      background: #fee2e2;
+      border-color: #f87171
+    }
+
+    .bbar {
+      background: #f0f4f0;
+      border-radius: 20px;
+      height: 7px;
+      overflow: hidden;
+      margin: 5px 0 3px
+    }
+
+    .bfill {
+      height: 100%;
+      border-radius: 20px;
+      transition: width .6s ease, background .4s
+    }
+
+    .brow {
+      display: flex;
+      justify-content: space-between
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-weight: 600
+    }
+
+    .b-ok {
+      background: #dcfce7;
+      color: #166534
+    }
+
+    .b-warn {
+      background: #fef9c3;
+      color: #854d0e
+    }
+
+    .b-over {
+      background: #fee2e2;
+      color: #991b1b
+    }
+
+    .loader {
+      text-align: center;
+      padding: 40px;
+      color: var(--txt2);
+      font-size: 13px
+    }
+
+    .spin {
+      width: 26px;
+      height: 26px;
+      border: 3px solid var(--G3);
+      border-top-color: var(--G);
+      border-radius: 50%;
+      animation: sp .7s linear infinite;
+      margin: 0 auto 8px
+    }
+
+    @keyframes sp {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111827;
+      color: #fff;
+      padding: 9px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      z-index: 400;
+      white-space: nowrap;
+      animation: fiu .3s ease;
+      pointer-events: none
+    }
+
+    @keyframes fiu {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0)
+      }
+    }
+
+    .empty {
+      text-align: center;
+      padding: 28px 0;
+      color: var(--txt3);
+      font-size: 12.5px
+    }
+
+    .empty-ico {
+      font-size: 36px;
+      margin-bottom: 8px
+    }
+
+    .wtabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 10px;
+      scrollbar-width: none
+    }
+
+    .wtabs::-webkit-scrollbar {
+      display: none
+    }
+
+    .wtab {
+      flex-shrink: 0;
+      padding: 5px 11px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      color: var(--txt2);
+      transition: all .2s
+    }
+
+    .wtab.on {
+      background: var(--G);
+      border-color: var(--G);
+      color: #fff
+    }
+
+    .ov {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 300;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center
+    }
+
+    .pop {
+      background: #fff;
+      border-radius: 22px 22px 0 0;
+      padding: 20px 18px 28px;
+      width: 100%;
+      max-width: 430px;
+      max-height: 80vh;
+      overflow-y: auto
+    }
+
+    .pop-hdl {
+      width: 32px;
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      margin: 0 auto 14px
+    }
+
+    /* Add modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .55);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 18px;
+      padding: 22px 20px 20px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .2)
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: var(--txt)
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px
+    }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 10px;
+      background: #f3f4f6;
+      color: var(--txt2);
+      border: none;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer
+    }
+
+    .btn-ok {
+      flex: 1;
+      padding: 10px;
+      background: var(--G);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer
+    }
+
+    .btn-ok:disabled {
+      opacity: .5;
+      cursor: not-allowed
+    }
+
+    .add-fab {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px 5px 8px;
+      background: var(--G4);
+      color: var(--G);
+      border: 1.5px solid var(--G3);
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .add-fab:hover {
+      background: var(--G3)
+    }
+
+    .a-ok {
+      background: #e6f7ec;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .a-warn {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .a-over {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    /* Grid hũ ngân sách */
+    .jgrid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+      margin-bottom: 10px;
+    }
+
+    .jcard {
+      background: #fff;
+      border-radius: 11px;
+      padding: 8px 5px;
+      text-align: center;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .jcard:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .jname {
+      font-size: 8.5px;
+      color: var(--txt2);
+      margin-bottom: 5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative;
+    }
+
+    .jvial {
+      width: 26px;
+      height: 36px;
+      background: #f0f0f0;
+      border-radius: 5px;
+      margin: 0 auto 4px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid #ddd;
+    }
+
+    .jwater {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-radius: 3px 3px 0 0;
+      transition: height 0.7s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s;
+    }
+
+    .jpct {
+      font-size: 9.5px;
+      font-weight: 700;
+      position: relative;
+    }
+
+    .txl {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .txi {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid #f3f4f6;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .txi:last-child {
+      border-bottom: none;
+    }
+
+    .txi:hover {
+      background: #fafafa;
+      margin: 0 -4px;
+      padding-left: 4px;
+      padding-right: 4px;
+      border-radius: 8px;
+    }
+
+    .txicon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .tinfo {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tdesc {
+      font-size: 12.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tmeta {
+      font-size: 10.5px;
+      color: var(--txt3);
+    }
+
+    .tamt {
+      font-size: 12.5px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .inc {
+      color: #16a34a;
+    }
+
+    .expc {
+      color: var(--R);
+    }
+
+    /* Form nhập liệu */
+    .fgrp {
+      margin-bottom: 12px;
+    }
+
+    .flbl {
+      font-size: 10.5px;
+      color: var(--txt2);
+      font-weight: 600;
+      margin-bottom: 5px;
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .finp,
+    .fsel {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      font-size: 13.5px;
+      background: #fff;
+      color: var(--txt);
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+
+    .finp:focus,
+    .fsel:focus {
+      border-color: var(--G);
+    }
+
+    .amtbig {
+      font-size: 32px;
+      font-weight: 800;
+      text-align: center;
+      border: none;
+      border-bottom: 2.5px solid var(--G);
+      border-radius: 0;
+      background: transparent;
+      width: 100%;
+      padding: 6px 0 8px;
+      outline: none;
+      letter-spacing: -1px;
+      color: var(--txt);
+    }
+
+    .amtbig::placeholder {
+      color: #d1d5db;
+    }
+
+    .ttog {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tbtn {
+      padding: 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+      color: var(--txt2);
+    }
+
+    .tbtn.ti {
+      background: #e6f7ec;
+      border-color: #16a34a;
+      color: #16a34a;
+    }
+
+    .tbtn.te {
+      background: #fef2f2;
+      border-color: var(--R);
+      color: var(--R);
+    }
+
+    /* Các loại nút */
+    .sbtn {
+      width: 100%;
+      padding: 13px;
+      background: var(--G);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 6px;
+      letter-spacing: 0.2px;
+    }
+
+    .sbtn:hover {
+      background: #3d7a46;
+    }
+
+    .sbtn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .sbtn-red {
+      width: 100%;
+      padding: 11px;
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1.5px solid #fecaca;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+
+    /* Progress bar ngân sách */
+    .bbar {
+      background: #f0f4f0;
+      border-radius: 20px;
+      height: 7px;
+      overflow: hidden;
+      margin: 5px 0 3px;
+    }
+
+    .bfill {
+      height: 100%;
+      border-radius: 20px;
+      transition: width 0.6s ease, background 0.4s;
+    }
+
+    .brow {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .b-ok {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .b-warn {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+
+    .b-over {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* Trạng thái tải và Toast */
+    .loader {
+      text-align: center;
+      padding: 40px;
+      color: var(--txt2);
+      font-size: 13px;
+    }
+
+    .spin {
+      width: 26px;
+      height: 26px;
+      border: 3px solid var(--G3);
+      border-top-color: var(--G);
+      border-radius: 50%;
+      animation: sp 0.7s linear infinite;
+      margin: 0 auto 8px;
+    }
+
+    @keyframes sp {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111827;
+      color: #fff;
+      padding: 9px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      z-index: 400;
+      white-space: nowrap;
+      animation: fiu 0.3s ease;
+      pointer-events: none;
+    }
+
+    @keyframes fiu {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    /* Trạng thái trống */
+    .empty {
+      text-align: center;
+      padding: 28px 0;
+      color: var(--txt3);
+      font-size: 12.5px;
+    }
+
+    .empty-ico {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+
+    /* Tabs */
+    .wtabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 10px;
+      scrollbar-width: none;
+    }
+
+    .wtabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .wtab {
+      flex-shrink: 0;
+      padding: 5px 11px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      color: var(--txt2);
+      transition: all 0.2s;
+    }
+
+    .wtab.on {
+      background: var(--G);
+      border-color: var(--G);
+      color: #fff;
+    }
+
+    /* Overlay & Popup */
+    .ov {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 300;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .pop {
+      background: #fff;
+      border-radius: 22px 22px 0 0;
+      padding: 20px 18px 28px;
+      width: 100%;
+      max-width: 430px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .pop-hdl {
+      width: 32px;
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      margin: 0 auto 14px;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 18px;
+      padding: 22px 20px 20px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: var(--txt);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 10px;
+      background: #f3f4f6;
+      color: var(--txt2);
+      border: none;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-ok {
+      flex: 1;
+      padding: 10px;
+      background: var(--G);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-ok:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .add-fab {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px 5px 8px;
+      background: var(--G4);
+      color: var(--G);
+      border: 1.5px solid var(--G3);
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .add-fab:hover {
+      background: var(--G3);
+    }
+
+    /* Visual refresh */
+    :root {
+      --G: #2f7d5b;
+      --G2: #43a672;
+      --G3: #bfe8d2;
+      --G4: #edf8f2;
+      --R: #dc3f4a;
+      --R2: #fff1f2;
+      --Y: #d99014;
+      --Y2: #fff8e8;
+      --txt: #10201a;
+      --txt2: #64736d;
+      --txt3: #9aa7a2;
+      --bg: #eef3f6;
+      --card: #ffffff;
+      --border: #dfe8e5;
+      --shadow: 0 12px 34px rgba(20, 43, 34, 0.08);
+      --shadow-sm: 0 6px 18px rgba(20, 43, 34, 0.07);
+    }
+
+    body {
+      background: linear-gradient(180deg, #eaf3f0 0%, #f7faf9 46%, #eef3f6 100%);
+    }
+
+    .shell {
+      background: #f7faf9;
+      box-shadow: 0 0 0 1px rgba(16, 32, 26, 0.04), 0 28px 80px rgba(16, 32, 26, 0.14);
+      overflow: hidden;
+    }
+
+    .hdr {
+      background: linear-gradient(145deg, #123d30 0%, #25694e 55%, #47a371 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 16px 34px rgba(18, 61, 48, 0.22);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hdr::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.26);
+    }
+
+    .hdr-top {
+      padding: 18px 0 12px;
+    }
+
+    .logo {
+      font-size: 18px;
+    }
+
+    .logo-dot {
+      width: 9px;
+      height: 9px;
+      opacity: 1;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, .14);
+    }
+
+    .hdr-lbl {
+      color: rgba(255, 255, 255, .7);
+    }
+
+    .hdr-bal {
+      font-size: 24px;
+    }
+
+    .hdr-greet {
+      color: rgba(255, 255, 255, .78);
+      padding-bottom: 16px;
+    }
+
+    .pg {
+      padding: 16px 14px 92px;
+    }
+
+    .card {
+      border-color: rgba(16, 32, 26, 0.07);
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-hd {
+      margin-bottom: 12px;
+    }
+
+    .card-t {
+      color: #50615a;
+      letter-spacing: .7px;
+    }
+
+    .link {
+      color: var(--G);
+    }
+
+    .mnav {
+      border: 1px solid rgba(16, 32, 26, 0.07);
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+      padding: 9px 12px;
+    }
+
+    .mnavb {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #f1f6f4;
+    }
+
+    .mnavb:hover {
+      background: var(--G4);
+      color: var(--G);
+    }
+
+    .sum3-item {
+      padding: 11px 6px;
+    }
+
+    .sum3-lbl {
+      color: #899792;
+    }
+
+    .sum3-val {
+      font-size: 15px;
+    }
+
+    .abanner {
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .a-ok {
+      background: #e9f8ef;
+      border-color: #b9e8c9;
+    }
+
+    .a-warn {
+      background: #fff7e6;
+      border-color: #f5d28c;
+    }
+
+    .a-over {
+      background: #fff0f1;
+      border-color: #f5bdc2;
+    }
+
+    .jgrid {
+      gap: 8px;
+    }
+
+    .jcard {
+      border-color: rgba(16, 32, 26, 0.07);
+      border-radius: 12px;
+      box-shadow: 0 8px 18px rgba(20, 43, 34, 0.06);
+      padding: 10px 6px;
+    }
+
+    .jvial {
+      background: #eef3f1;
+      border-color: #d9e4df;
+      box-shadow: inset 0 1px 3px rgba(16, 32, 26, 0.08);
+    }
+
+    .txi {
+      border-bottom-color: #edf1ef;
+      border-radius: 10px;
+      padding: 10px 4px;
+    }
+
+    .txi:hover {
+      background: #f4f8f6;
+    }
+
+    .txicon {
+      background: #f1f6f4;
+      border: 1px solid #e1ebe6;
+    }
+
+    .tdesc {
+      color: var(--txt);
+    }
+
+    .tmeta {
+      color: #8a9893;
+    }
+
+    .finp,
+    .fsel {
+      min-height: 42px;
+      border-color: #d9e4df;
+      border-radius: 12px;
+      background: #fbfdfc;
+    }
+
+    .finp:focus,
+    .fsel:focus {
+      border-color: var(--G2);
+      box-shadow: 0 0 0 4px rgba(67, 166, 114, 0.12);
+    }
+
+    .amtbig {
+      border-bottom-color: var(--G2);
+    }
+
+    .tbtn {
+      border-color: #d9e4df;
+      border-radius: 12px;
+    }
+
+    .tbtn.ti {
+      background: #eaf8f0;
+    }
+
+    .tbtn.te {
+      background: #fff0f1;
+    }
+
+    .sbtn,
+    .btn-ok {
+      background: linear-gradient(135deg, #2f7d5b, #43a672);
+      border-radius: 12px;
+      box-shadow: 0 10px 22px rgba(47, 125, 91, 0.2);
+    }
+
+    .sbtn:hover,
+    .btn-ok:hover {
+      background: linear-gradient(135deg, #27694c, #369364);
+    }
+
+    .sbtn-red {
+      border-radius: 12px;
+    }
+
+    .bbar {
+      background: #e8efec;
+    }
+
+    .badge,
+    .wtab,
+    .add-fab {
+      border-radius: 999px;
+    }
+
+    .wtab {
+      padding: 6px 12px;
+      border-color: #d9e4df;
+      background: #fbfdfc;
+    }
+
+    .wtab.on {
+      background: #2f7d5b;
+      border-color: #2f7d5b;
+      box-shadow: 0 8px 16px rgba(47, 125, 91, 0.18);
+    }
+
+    .bnav {
+      bottom: 8px;
+      width: calc(100% - 20px);
+      max-width: 410px;
+      border: 1px solid rgba(16, 32, 26, 0.08);
+      border-radius: 18px;
+      box-shadow: 0 16px 34px rgba(16, 32, 26, 0.16);
+      padding: 5px 5px calc(5px + env(safe-area-inset-bottom, 0));
+    }
+
+    .nb {
+      border-radius: 14px;
+      padding: 8px 2px 7px;
+    }
+
+    .nb.on {
+      background: var(--G4);
+      color: var(--G);
+    }
+
+    .pop,
+    .modal-box {
+      border: 1px solid rgba(16, 32, 26, 0.08);
+      box-shadow: var(--shadow);
+    }
+
+    .pop {
+      border-radius: 20px 20px 0 0;
+    }
+
+    .modal-box {
+      border-radius: 16px;
+    }
+
+    .btn-cancel {
+      border-radius: 12px;
+    }
+
+    .toast {
+      bottom: 92px;
+      box-shadow: 0 12px 28px rgba(16, 32, 26, 0.24);
+    }
+
+    /* Home dashboard polish */
+    .abanner {
+      position: relative;
+      align-items: center;
+      justify-content: center;
+      gap: 11px;
+      min-height: 58px;
+      padding: 12px 14px;
+      line-height: 1.35;
+      border-width: 1px;
+      overflow: hidden;
+    }
+
+    .abanner::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: currentColor;
+      opacity: .38;
+    }
+
+    .abanner>span:first-child {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 34px;
+      line-height: 1;
+      text-align: center;
+      background: rgba(255, 255, 255, .72);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .65), 0 8px 16px rgba(16, 32, 26, .08);
+    }
+
+    .abanner>span:last-child {
+      flex: 0 1 auto;
+      min-width: 160px;
+      max-width: 230px;
+      font-size: 12px;
+      font-weight: 650;
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    .abanner strong {
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .money-summary .sum3 {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 4px 12px 12px;
+    }
+
+    .money-summary .sum3-item {
+      min-height: 74px;
+      padding: 12px 10px;
+      border: 1px solid #e3ece8;
+      border-radius: 13px;
+      background: #fbfdfc;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .money-summary .sum3-item:first-child {
+      min-height: 92px;
+      background: linear-gradient(135deg, #163f32, #2f7d5b);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 14px 26px rgba(47, 125, 91, .18);
+    }
+
+    .money-summary .sum3-item+.sum3-item {
+      border-left: 1px solid #e3ece8;
+    }
+
+    .money-summary .sum3-item:first-child .sum3-lbl {
+      color: rgba(255, 255, 255, .72);
+    }
+
+    .money-summary .sum3-item:first-child .sum3-val {
+      color: #fff;
+      font-size: 24px;
+    }
+
+    .money-summary .sum3-lbl {
+      margin-bottom: 8px;
+      font-size: 9px;
+    }
+
+    .money-summary .sum3-val {
+      font-size: 17px;
+      line-height: 1.1;
+    }
+
+    .jgrid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .jcard {
+      min-height: 118px;
+      padding: 12px 11px;
+      border-radius: 15px;
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%);
+      box-shadow: 0 10px 22px rgba(16, 32, 26, .08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .jcard:hover {
+      box-shadow: 0 14px 28px rgba(16, 32, 26, .12);
+    }
+
+    .jname {
+      font-size: 11px;
+      color: #273a32;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+
+    .jvial {
+      width: 34px;
+      height: 48px;
+      margin: 0 auto 8px;
+      border-radius: 9px 9px 11px 11px;
+      background: linear-gradient(180deg, #f6faf8, #e9f1ee);
+      border-color: #d6e5df;
+    }
+
+    .jvial::after {
+      content: "";
+      position: absolute;
+      inset: 5px 8px auto;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .75);
+    }
+
+    .jwater {
+      left: 3px;
+      right: 3px;
+      bottom: 3px;
+      border-radius: 6px 6px 9px 9px;
+    }
+
+    .jpct {
+      min-height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      align-self: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eef8f3;
+      font-size: 10px;
+    }
+
+    .card-hd+.jgrid,
+    div>.card-hd+.jgrid {
+      margin-top: 8px;
+    }
+
+    /* Match compact dashboard mockup */
+    .hdr {
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .hdr-top {
+      padding: 18px 14px 10px;
+    }
+
+    .hdr-greet {
+      padding: 0 14px 18px;
+    }
+
+    .pg {
+      padding: 14px 14px 82px;
+    }
+
+    .mnav {
+      min-height: 36px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      box-shadow: none;
+      margin-bottom: 10px;
+    }
+
+    .mnavl {
+      font-size: 14px;
+      color: #0f1f19;
+    }
+
+    .mnavb {
+      background: transparent;
+    }
+
+    .abanner {
+      min-height: 42px;
+      padding: 8px 12px;
+      justify-content: flex-start;
+      gap: 9px;
+      border-radius: 9px;
+      box-shadow: none;
+    }
+
+    .abanner::before {
+      display: none;
+    }
+
+    .abanner>span:first-child {
+      width: 18px;
+      height: 18px;
+      flex-basis: 18px;
+      border-radius: 4px;
+      background: #4fbf7b;
+      color: #fff;
+      font-size: 11px !important;
+      box-shadow: none;
+    }
+
+    .abanner>span:last-child {
+      min-width: 0;
+      max-width: none;
+      text-align: left;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .money-summary {
+      border-radius: 13px;
+      box-shadow: none;
+      margin-bottom: 12px;
+    }
+
+    .money-summary .sum3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+      padding: 4px 0;
+    }
+
+    .money-summary .sum3-item,
+    .money-summary .sum3-item:first-child {
+      min-height: 70px;
+      padding: 11px 8px;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      color: var(--txt);
+    }
+
+    .money-summary .sum3-item+.sum3-item {
+      border-left: 1px solid #e1e9e5;
+    }
+
+    .money-summary .sum3-lbl,
+    .money-summary .sum3-item:first-child .sum3-lbl {
+      color: #a0aca7;
+      font-size: 9px;
+      margin-bottom: 8px;
+    }
+
+    .money-summary .sum3-val,
+    .money-summary .sum3-item:first-child .sum3-val {
+      font-size: 16px;
+      color: inherit;
+    }
+
+    .money-summary .sum3-item:first-child .sum3-val {
+      color: #06a64f;
+    }
+
+    .money-summary .inc {
+      color: #06a64f;
+    }
+
+    .money-summary .expc {
+      color: #ef4444;
+    }
+
+    .card-hd {
+      margin-bottom: 8px;
+    }
+
+    .card-t {
+      font-size: 11px;
+      color: #5d6b66;
+      letter-spacing: 1.3px;
+    }
+
+    .jgrid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 7px;
+      margin-bottom: 10px;
+    }
+
+    .jcard {
+      min-height: 88px;
+      padding: 8px 5px;
+      border-radius: 9px;
+      box-shadow: none;
+      background: #fff;
+      justify-content: center;
+    }
+
+    .jcard:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(16, 32, 26, .08);
+    }
+
+    .jname {
+      font-size: 8.5px;
+      color: #697771;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .jvial {
+      width: 26px;
+      height: 36px;
+      margin-bottom: 6px;
+      border-radius: 5px;
+    }
+
+    .jvial::after {
+      display: none;
+    }
+
+    .jwater {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 3px 3px 0 0;
+    }
+
+    .jpct {
+      min-height: auto;
+      padding: 0;
+      background: transparent;
+      border-radius: 0;
+      font-size: 9.5px;
+    }
+
+    .bnav {
+      bottom: 0;
+      width: 100%;
+      max-width: 430px;
+      border: none;
+      border-top: 1px solid #dfe7e3;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 6px 4px calc(5px + env(safe-area-inset-bottom, 0));
+    }
+
+    .nb {
+      border-radius: 8px;
+    }
+
+    /* Desktop web layout */
+    @media (min-width: 900px) {
+      body {
+        background: #edf4f1;
+      }
+
+      .shell {
+        max-width: 1120px;
+        min-height: 100vh;
+        box-shadow: none;
+        overflow: visible;
+      }
+
+      .hdr {
+        border-radius: 0 0 22px 22px;
+        margin: 0 16px;
+      }
+
+      .hdr-top {
+        padding: 24px 28px 12px;
+      }
+
+      .logo {
+        font-size: 22px;
+      }
+
+      .hdr-bal {
+        font-size: 32px;
+      }
+
+      .hdr-greet {
+        padding: 0 28px 24px;
+        font-size: 14px;
+      }
+
+      .pg {
+        max-width: 1040px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 22px 24px 104px;
+      }
+
+      .mnav,
+      .abanner,
+      .money-summary,
+      .card {
+        box-shadow: 0 10px 24px rgba(16, 32, 26, .06);
+      }
+
+      .mnav {
+        min-height: 44px;
+        padding: 8px 14px;
+      }
+
+      .mnavl {
+        font-size: 16px;
+      }
+
+      .abanner {
+        min-height: 50px;
+        padding: 10px 16px;
+      }
+
+      .abanner>span:last-child {
+        font-size: 14px;
+      }
+
+      .money-summary .sum3-item,
+      .money-summary .sum3-item:first-child {
+        min-height: 96px;
+      }
+
+      .money-summary .sum3-lbl,
+      .money-summary .sum3-item:first-child .sum3-lbl {
+        font-size: 10px;
+      }
+
+      .money-summary .sum3-val,
+      .money-summary .sum3-item:first-child .sum3-val {
+        font-size: 22px;
+      }
+
+      .card-hd {
+        margin-top: 4px;
+      }
+
+      .card-t {
+        font-size: 12px;
+      }
+
+      .jgrid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .jcard {
+        min-height: 132px;
+        padding: 14px 10px;
+      }
+
+      .jname {
+        font-size: 11px;
+      }
+
+      .jvial {
+        width: 34px;
+        height: 50px;
+        border-radius: 8px;
+      }
+
+      .jpct {
+        font-size: 11px;
+      }
+
+      .bnav {
+        width: min(100%, 1120px);
+        max-width: 1120px;
+        left: 50%;
+        padding: 8px 12px;
+        border-left: 1px solid #dfe7e3;
+        border-right: 1px solid #dfe7e3;
+      }
+
+      .nb {
+        padding: 9px 4px;
+        font-size: 11px;
+      }
+
+      .nb svg {
+        width: 22px;
+        height: 22px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .jgrid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+    }
+
+    /* Requested compact home layout */
+    .abanner {
+      min-height: 44px;
+      padding: 9px 13px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      border-radius: 10px;
+      box-shadow: none;
+      line-height: 1.25;
+    }
+
+    .abanner::before {
+      display: none;
+    }
+
+    .abanner>span:first-child {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #4fbd7a;
+      color: #fff;
+      font-size: 11px !important;
+      line-height: 1;
+      box-shadow: none;
+    }
+
+    .abanner>span:last-child {
+      min-width: 0;
+      max-width: none;
+      flex: 1;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 650;
+      color: inherit;
+    }
+
+    .abanner strong {
+      font-size: 12px;
+    }
+
+    .money-summary {
+      margin-bottom: 12px;
+      border-radius: 14px;
+      box-shadow: none;
+      overflow: hidden;
+      padding: 0 !important;
+    }
+
+    .money-summary .sum3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+      padding: 0;
+      min-height: 52px;
+    }
+
+    .money-summary .sum3-item,
+    .money-summary .sum3-item:first-child {
+      min-height: 52px;
+      padding: 8px 6px 7px;
+      border: 0;
+      border-radius: 0;
+      background: #fff;
+      color: var(--txt);
+      box-shadow: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .money-summary .sum3-item+.sum3-item {
+      border-left: 1px solid #e1e8e5;
+    }
+
+    .money-summary .sum3-lbl,
+    .money-summary .sum3-item:first-child .sum3-lbl {
+      margin-bottom: 7px;
+      color: #a4ada9;
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .money-summary .sum3-val,
+    .money-summary .sum3-item:first-child .sum3-val {
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .money-summary .inc,
+    .money-summary .sum3-item:first-child .sum3-val {
+      color: #05a84f;
+    }
+
+    .money-summary .expc {
+      color: #ef4444;
+    }
+
+    @media (min-width: 900px) {
+      .abanner {
+        min-height: 48px;
+        padding: 10px 16px;
+      }
+
+      .abanner>span:last-child {
+        font-size: 14px;
+      }
+
+      .abanner strong {
+        font-size: 14px;
+      }
+
+      .money-summary .sum3-item,
+      .money-summary .sum3-item:first-child {
+        min-height: 62px;
+      }
+
+      .money-summary .sum3-val,
+      .money-summary .sum3-item:first-child .sum3-val {
+        font-size: 14px;
+      }
+    }
+
+    /* Keep the final UI as the compact mobile app mockup */
+    @media (min-width: 900px) {
+      body {
+        background: #eef3f0;
+      }
+
+      .shell {
+        max-width: 430px;
+        min-height: 100vh;
+        margin: 0 auto;
+        overflow: hidden;
+        box-shadow: 0 0 0 1px rgba(16, 32, 26, 0.06), 0 24px 70px rgba(16, 32, 26, 0.14);
+      }
+
+      .hdr {
+        margin: 0;
+        border-radius: 0;
+      }
+
+      .hdr-top {
+        padding: 18px 14px 10px;
+      }
+
+      .logo {
+        font-size: 18px;
+      }
+
+      .hdr-bal {
+        font-size: 24px;
+      }
+
+      .hdr-greet {
+        padding: 0 14px 18px;
+        font-size: 12px;
+      }
+
+      .pg {
+        max-width: 430px;
+        padding: 14px 14px 82px;
+      }
+
+      .mnav {
+        min-height: 36px;
+        padding: 5px 10px;
+        box-shadow: none;
+      }
+
+      .mnavl {
+        font-size: 14px;
+      }
+
+      .abanner {
+        min-height: 42px;
+        padding: 8px 12px;
+      }
+
+      .abanner>span:last-child,
+      .abanner strong {
+        font-size: 12px;
+      }
+
+      .money-summary {
+        box-shadow: none;
+      }
+
+      .money-summary .sum3-item,
+      .money-summary .sum3-item:first-child {
+        min-height: 62px;
+      }
+
+      .money-summary .sum3-val,
+      .money-summary .sum3-item:first-child .sum3-val {
+        font-size: 14px;
+      }
+
+      .jgrid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .jcard {
+        min-height: 88px;
+        padding: 8px 5px;
+      }
+
+      .jname {
+        font-size: 8.5px;
+      }
+
+      .jvial {
+        width: 26px;
+        height: 36px;
+        border-radius: 5px;
+      }
+
+      .jpct {
+        font-size: 9.5px;
+      }
+
+      .bnav {
+        width: 100%;
+        max-width: 430px;
+        padding: 6px 4px calc(5px + env(safe-area-inset-bottom, 0));
+        border-left: none;
+        border-right: none;
+      }
+
+      .nb {
+        font-size: 9px;
+      }
+
+      .nb svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect, useCallback, useMemo } = React;
+    const RC = Recharts;
+
+    const API = "http://127.0.0.1:8000";
+    // UID is now managed dynamically via window.UID after login
+    const MONTHS = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+    const JAR_NAMES = ["Ăn uống", "Lưu trú", "Di chuyển", "Giải trí", "Sức khỏe", "Giáo dục", "Mua sắm", "Tiết kiệm"];
+    const JAR_MAX = 8; // giới hạn tối đa budget cùng lúc = 8 hũ
+    // Alias: tên cũ trong DB → tên hũ hiển thị (để backward-compat khi mock data dùng tên cũ)
+    const CAT_ALIAS = { "Tiền nhà": "Lưu trú", "Nhà cửa": "Lưu trú" };
+    const resolveJar = name => CAT_ALIAS[name] || name;
+    const CAT_EMOJI = { "Thu nhập": "💰", "Ăn uống": "🍜", "Di chuyển": "🚗", "Giải trí": "🎮", "Sức khỏe": "🏥", "Giáo dục": "📚", "Mua sắm": "🛍️", "Lưu trú": "🏠", "Tiết kiệm": "🐷", "Khác": "💳", "Chi tiêu khác": "💳" };
+    const PCOLS = ["#5a9e62", "#7ec489", "#3d7a46", "#a8d5b5", "#2d6a36", "#c2e8cd", "#4a8c52", "#91c99e"];
+
+    const fmtFull = v =>
+      new Intl.NumberFormat('vi-VN', {
+        style: 'currency', currency: 'VND',
+        maximumFractionDigits: 0
+      }).format(Number(v || 0));
+
+    const fmtShort = v => {
+      const n = Number(v || 0);
+      if (Math.abs(n) >= 1e9) return (n / 1e9).toFixed(1) + ' tỷ';
+      if (Math.abs(n) >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+      if (Math.abs(n) >= 1e3) return (n / 1e3).toFixed(0) + 'K';
+      return n.toLocaleString('vi-VN');
+    };
+
+    const fmtNum = v => Number(v || 0).toLocaleString('vi-VN');
+
+    // Giữ alias để không phải sửa hàng loạt ngay
+    const fmt = fmtFull;
+    const fmts = fmtShort;
+
+    const today = () => new Date().toISOString().slice(0, 10);
+
+    const MOCK_DASH = {
+      summary: { TotalIncome: 15000000, TotalExpense: 9200000, NetBalance: 5800000, Status: 'SURPLUS' },
+      expenses_by_category: [
+        { CategoryName: "Ăn uống", TotalSpent: 2800000, NumTransactions: 12 },
+        { CategoryName: "Lưu trú", TotalSpent: 3500000, NumTransactions: 1 },
+        { CategoryName: "Di chuyển", TotalSpent: 950000, NumTransactions: 8 },
+        { CategoryName: "Giải trí", TotalSpent: 700000, NumTransactions: 4 },
+        { CategoryName: "Sức khỏe", TotalSpent: 600000, NumTransactions: 2 },
+        { CategoryName: "Mua sắm", TotalSpent: 650000, NumTransactions: 3 },
+      ],
+      budget: { income: 15000000, expense: 9200000, net: 5800000, ratio: 61.3, status: 'OK', message: 'Chi tiêu hợp lý — dưới 70% thu nhập' },
+    };
+    const MOCK_ACC = {
+      items: [
+        { AccountID: 1, BankName: "Vietcombank", Balance: 12500000 },
+        { AccountID: 2, BankName: "Techcombank", Balance: 8300000 },
+        { AccountID: 3, BankName: "Tiền mặt", Balance: 2100000 },
+      ], total: 22900000
+    };
+    const MOCK_INC = [
+      { IncomeID: 1, Amount: 15000000, IncomeDate: "2025-05-25", Description: "Lương tháng 5", BankName: "Vietcombank", AccountID: 1 },
+      { IncomeID: 2, Amount: 2000000, IncomeDate: "2025-05-10", Description: "Freelance", BankName: "Techcombank", AccountID: 2 },
+    ];
+    const MOCK_EXP = [
+      { ExpenseID: 1, Amount: 2800000, ExpenseDate: "2025-05-08", CategoryName: "Ăn uống", Description: "Ăn uống cả tháng", BankName: "Vietcombank", AccountID: 1 },
+      { ExpenseID: 2, Amount: 3500000, ExpenseDate: "2025-05-01", CategoryName: "Lưu trú", Description: "Tiền thuê nhà T5", BankName: "Vietcombank", AccountID: 1 },
+      { ExpenseID: 3, Amount: 950000, ExpenseDate: "2025-05-15", CategoryName: "Di chuyển", Description: "Grab & xăng xe", BankName: "Tiền mặt", AccountID: 3 },
+      { ExpenseID: 4, Amount: 700000, ExpenseDate: "2025-05-20", CategoryName: "Giải trí", Description: "Xem phim & cafe", BankName: "Techcombank", AccountID: 2 },
+      { ExpenseID: 5, Amount: 600000, ExpenseDate: "2025-05-22", CategoryName: "Sức khỏe", Description: "Khám định kỳ", BankName: "Vietcombank", AccountID: 1 },
+    ];
+    const MOCK_CATS = [
+      { CategoryID: 1, CategoryName: "Ăn uống" }, { CategoryID: 2, CategoryName: "Di chuyển" },
+      { CategoryID: 3, CategoryName: "Giải trí" }, { CategoryID: 4, CategoryName: "Sức khỏe" },
+      { CategoryID: 5, CategoryName: "Giáo dục" }, { CategoryID: 6, CategoryName: "Mua sắm" },
+      { CategoryID: 7, CategoryName: "Lưu trú" }, { CategoryID: 8, CategoryName: "Tiết kiệm" },
+    ];
+
+    async function api(path, opts = {}) {
+      try {
+        const r = await fetch(API + path, { headers: { 'Content-Type': 'application/json' }, ...opts });
+        if (!r.ok) {
+          let detail = `Lỗi HTTP ${r.status}`;
+          try { const e = await r.json(); detail = e.detail || detail; } catch { }
+          return { __error: true, status: r.status, detail };
+        }
+        return await r.json();
+      } catch {
+        return { __error: true, status: 0, detail: 'Không kết nối được server — kiểm tra backend đang chạy chưa' };
+      }
+    }
+
+    // Helper: kiểm tra response có lỗi không
+    const isErr = r => !r || r.__error === true;
+
+    function useGlobal() {
+      const [month, setMonth] = useState(new Date().getMonth() + 1);
+      const [year, setYear] = useState(new Date().getFullYear());
+      const [totalBal, setTotalBal] = useState(0);
+      const [toast, setToast] = useState(null);
+      const [refresh, setRefresh] = useState(0);
+      // dashData shared so Jars can use real category spend data
+      const [dashData, setDashData] = useState(null);
+      const doRefresh = () => setRefresh(r => r + 1);
+      const trigger = doRefresh; // alias — TxPage, BudgetPage, AccountPage gọi g.trigger()
+      const showToast = msg => { setToast(msg); setTimeout(() => setToast(null), 2500); };
+      return { month, setMonth, year, setYear, totalBal, setTotalBal, toast, showToast, refresh, doRefresh, trigger, dashData, setDashData };
+    }
+
+    const Toast = ({ msg }) => <div className="toast">{msg}</div>;
+
+    // ── Jar: sử dụng spent từ dashData thực, limit từ API /budget ──
+    function Jar({ name, limit, spent }) {
+      const d = new Date();
+      const days = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+      // Tiến độ hợp lý theo ngày trong tháng
+      const safePace = limit > 0 ? (limit / days) * d.getDate() : 0;
+      const over = limit > 0 && spent > limit;
+      const warn = limit > 0 && !over && spent > safePace;
+      // pct = (spent / limit) * 100, nếu limit=0 dùng 0%
+      const pct = limit > 0 ? Math.min(100, (spent / limit) * 100) : 0;
+      const col = over ? '#e84848' : warn ? '#f59e0b' : '#5a9e62';
+      return (
+        <div className="jcard">
+          <div className="jname" title={name}>{name}</div>
+          <div className="jvial">
+            <div className="jwater" style={{ height: `${pct}%`, background: col }} />
+          </div>
+          <div className="jpct" style={{ color: over ? '#e84848' : warn ? '#d97706' : '#16a34a' }}>
+            {limit > 0 ? Math.round(pct) + '%' : '—'}
+          </div>
+        </div>
+      );
+    }
+
+    function MonthNav({ month, year, setMonth, setYear }) {
+      const prev = () => month === 1 ? (setMonth(12), setYear(y => y - 1)) : setMonth(m => m - 1);
+      const next = () => month === 12 ? (setMonth(1), setYear(y => y + 1)) : setMonth(m => m + 1);
+      return (
+        <div className="mnav">
+          <button className="mnavb" onClick={prev}>&#8249;</button>
+          <span className="mnavl">{MONTHS[month - 1]} {year}</span>
+          <button className="mnavb" onClick={next}>&#8250;</button>
+        </div>
+      );
+    }
+
+    function RecentTxList({ month, year, limit, refreshKey }) {
+      const [rows, setRows] = useState([]);
+      useEffect(() => {
+        Promise.all([
+          api(`/income?user_id=${window.UID}&month=${month}&year=${year}`),
+          api(`/expenses?user_id=${window.UID}&month=${month}&year=${year}`)
+        ]).then(([inc, exp]) => {
+          const incRows = (inc || MOCK_INC).map((i, idx) => ({ ...i, type: 'inc', date: i.IncomeDate, cat: 'Thu nhập', id: i.IncomeID, _seq: idx }));
+          const expRows = (exp || MOCK_EXP).map((e, idx) => ({ ...e, type: 'exp', date: e.ExpenseDate, cat: e.CategoryName, id: e.ExpenseID, _seq: idx }));
+          const all = [...incRows, ...expRows].sort((a, b) => {
+            const dateDiff = new Date(b.date) - new Date(a.date);
+            if (dateDiff !== 0) return dateDiff;
+            return a._seq - b._seq; // cùng ngày: _seq nhỏ = server trả trước = ID cao = mới hơn
+          });
+          setRows(limit ? all.slice(0, limit) : all);
+        });
+      }, [month, year, refreshKey]);
+      if (!rows.length) return <div className="empty"><div className="empty-ico">📭</div>Chưa có giao dịch</div>;
+      return (
+        <div className="txl">
+          {rows.map(tx => (
+            <div key={tx.type + tx.id} className="txi">
+              <div className="txicon" style={{ background: tx.type === 'inc' ? '#e6f7ec' : '#fef2f2' }}>{CAT_EMOJI[tx.cat] || '💳'}</div>
+              <div className="tinfo">
+                <div className="tdesc">{tx.Description || tx.cat}</div>
+                <div className="tmeta">{tx.cat} · {tx.date}</div>
+              </div>
+              <div className={`tamt ${tx.type === 'inc' ? 'inc' : 'expc'}`}>{tx.type === 'inc' ? '+' : '-'}{fmts(tx.Amount)}</div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    /* ── PAGE 1: HOME ── */
+    function HomePage({ g, onNav }) {
+      const { month, year, setMonth, setYear, refresh } = g;
+      const [data, setData] = useState(null);
+      const [load, setLoad] = useState(true);
+
+      const [limits, setLimits] = useState({});
+      const [jarData, setJarData] = useState([]);
+
+      // Fetch dashboard + jars ngân sách cùng lúc — dùng /budget/jars để lấy spent+limit chính xác
+      useEffect(() => {
+        setLoad(true);
+        Promise.all([
+          api(`/dashboard/${window.UID}?month=${month}&year=${year}&_t=${Date.now()}`),
+          api(`/budget/jars/${window.UID}?month=${month}&year=${year}&_t=${Date.now()}`),
+        ]).then(([d, jarRows]) => {
+          setData(isErr(d) ? MOCK_DASH : d);
+          // jarRows = [{name, limit, spent, pct, status}, ...] — backend trả key lowercase
+          if (!isErr(jarRows) && Array.isArray(jarRows) && jarRows.length > 0) {
+            const map = {};
+            // FIX 1: backend trả `limit` (lowercase), không phải `LimitAmount`
+            jarRows.forEach(r => { map[r.name] = Number(r.limit || r.LimitAmount || 0); });
+            setLimits(map);
+            setJarData(jarRows);
+          } else {
+            // Fallback: đảm bảo 8 hũ luôn hiển thị dù API lỗi
+            setJarData(JAR_NAMES.map(n => ({ name: n, limit: 0, spent: 0, pct: 0, status: 'ok' })));
+          }
+          setLoad(false);
+        });
+      }, [month, year, refresh]);
+
+      if (load) return <div className="loader"><div className="spin" /><p>Đang tải...</p></div>;
+
+      const s = data?.summary || {};
+      const cats = data?.expenses_by_category || [];
+      const bud = data?.budget || {};
+      const net = Number(s.NetBalance || 0);
+      const aC = bud.status === 'OK' ? 'a-ok' : bud.status === 'WARNING' ? 'a-warn' : 'a-over';
+
+      const getSpent = name => {
+        const row = cats.find(c => c.CategoryName === name);
+        return Number(row?.TotalSpent || 0);
+      };
+
+      return (
+        <div className="pg">
+          <MonthNav month={month} year={year} setMonth={setMonth} setYear={setYear} />
+
+          {/* ── Banner ngân sách ── */}
+          <div className={`abanner ${aC}`}>
+            <span style={{ fontSize: 16 }}>
+              {bud.status === 'OK' ? '✅' : bud.status === 'WARNING' ? '⚠️' : '🚨'}
+            </span>
+            <span>
+              {bud.message || 'Chưa có dữ liệu'} · <strong>{Math.round(bud.ratio || 0)}%</strong> thu nhập
+            </span>
+          </div>
+
+          {/* ── Tổng thu / chi / còn lại ── */}
+          <div className="card money-summary">
+            <div className="sum3">
+              <div className="sum3-item">
+                <div className="sum3-lbl">Thu nhập</div>
+                <div className="sum3-val inc">{fmts(s.TotalIncome)}</div>
+              </div>
+              <div className="sum3-item">
+                <div className="sum3-lbl">Chi tiêu</div>
+                <div className="sum3-val expc">{fmts(s.TotalExpense)}</div>
+              </div>
+              <div className="sum3-item">
+                <div className="sum3-lbl">Còn lại</div>
+                <div className="sum3-val" style={{ color: net >= 0 ? '#16a34a' : '#e84848' }}>
+                  {fmts(net)}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── 8 Hũ ngân sách — dùng jarData từ /budget/jars (spent thực từ DB) ── */}
+          <div>
+            <div className="card-hd" style={{ marginBottom: 6 }}>
+              <span className="card-t">8 Hũ ngân sách</span>
+              <span className="link" onClick={() => onNav(3)}>Cài đặt →</span>
+            </div>
+            <div className="jgrid">
+              {(jarData.length > 0 ? jarData : JAR_NAMES.map(n => ({ name: n, limit: 0, spent: 0, pct: 0, status: 'ok' }))).map(jar => (
+                <Jar
+                  key={jar.name}
+                  name={jar.name}
+                  limit={Number(jar.limit || jar.LimitAmount || 0)}
+                  spent={Number(jar.spent || 0)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* ── Biểu đồ cột chi tiêu theo danh mục ── */}
+          {cats.length > 0 && (
+            <div className="card">
+              <div className="card-hd"><span className="card-t">Chi tiêu theo danh mục</span></div>
+              <RC.ResponsiveContainer width="100%" height={150}>
+                <RC.BarChart data={cats.slice(0, 6)} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
+                  <RC.XAxis
+                    dataKey="CategoryName"
+                    tick={{ fontSize: 8.5 }}
+                    tickFormatter={v => v.slice(0, 3)}
+                  />
+                  <RC.YAxis tickFormatter={fmts} tick={{ fontSize: 8 }} />
+                  <RC.Tooltip formatter={v => [fmt(v), 'Chi tiêu']} labelStyle={{ fontSize: 11 }} />
+                  <RC.Bar dataKey="TotalSpent" radius={[4, 4, 0, 0]}>
+                    {cats.slice(0, 6).map((_, i) => (
+                      <RC.Cell key={i} fill={PCOLS[i % PCOLS.length]} />
+                    ))}
+                  </RC.Bar>
+                </RC.BarChart>
+              </RC.ResponsiveContainer>
+            </div>
+          )}
+
+          {/* ── Biểu đồ tròn + legend ── */}
+          {cats.length > 0 && (
+            <div className="card">
+              <div className="card-hd"><span className="card-t">Tỷ lệ chi tiêu</span></div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <RC.ResponsiveContainer width={130} height={110}>
+                  <RC.PieChart>
+                    <RC.Pie
+                      data={cats}
+                      dataKey="TotalSpent"
+                      nameKey="CategoryName"
+                      cx="50%" cy="50%"
+                      outerRadius={52} innerRadius={26}
+                    >
+                      {cats.map((_, i) => (
+                        <RC.Cell key={i} fill={PCOLS[i % PCOLS.length]} />
+                      ))}
+                    </RC.Pie>
+                    <RC.Tooltip formatter={v => [fmt(v)]} />
+                  </RC.PieChart>
+                </RC.ResponsiveContainer>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                  {cats.slice(0, 5).map((c, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10.5 }}>
+                      <div style={{ width: 7, height: 7, borderRadius: 2, background: PCOLS[i], flexShrink: 0 }} />
+                      <span style={{ flex: 1, color: 'var(--txt2)', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                        {c.CategoryName}
+                      </span>
+                      <span style={{ fontWeight: 700, color: 'var(--txt)' }}>{fmts(c.TotalSpent)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Giao dịch gần nhất ── */}
+          <div className="card">
+            <div className="card-hd">
+              <span className="card-t">Giao dịch gần nhất</span>
+              <span className="link" onClick={() => onNav(1)}>Xem tất cả →</span>
+            </div>
+            <RecentTxList month={month} year={year} limit={5} refreshKey={refresh} />
+          </div>
+        </div>
+      );
+    }
+
+    /* ── PAGE 2: GIAO DỊCH ── */
+    function TxPage({ g }) {
+      const { month, year, setMonth, setYear, showToast, refresh, trigger } = g;
+      const [income, setIncome] = useState([]);
+      const [expenses, setExpenses] = useState([]);
+      const [weekIdx, setWeekIdx] = useState(0);
+      const [catFilter, setCatFilter] = useState('');   // '' = tất cả
+      const [typeFilter, setTypeFilter] = useState(''); // '' | 'inc' | 'exp'
+      const [sel, setSel] = useState(null);
+      const [load, setLoad] = useState(true);
+      const [cats, setCats] = useState([]);
+
+      const fetchData = () => {
+        setLoad(true);
+        Promise.all([
+          api(`/income?user_id=${window.UID}&month=${month}&year=${year}&_t=${Date.now()}`),
+          api(`/expenses?user_id=${window.UID}&month=${month}&year=${year}&_t=${Date.now()}`),
+          api('/categories'),
+        ]).then(([inc, exp, c]) => {
+          setIncome(!isErr(inc) ? inc : MOCK_INC);
+          setExpenses(!isErr(exp) ? exp : MOCK_EXP);
+          if (!isErr(c)) setCats(c);
+          setLoad(false);
+        });
+      };
+
+      // Thêm refresh vào deps — tự reload khi AddPage thêm giao dịch mới
+      useEffect(() => { fetchData(); }, [month, year, refresh]);
+
+      const all = useMemo(() => {
+        // _seq = vị trí trong response server (0 = mới nhất, server trả DESC theo ID)
+        const incRows = (income || []).map((i, idx) => ({
+          ...i, type: 'inc', date: i.IncomeDate,
+          cat: 'Thu nhập', desc: i.Description, id: i.IncomeID, _seq: idx,
+        }));
+        const expRows = (expenses || []).map((e, idx) => ({
+          ...e, type: 'exp', date: e.ExpenseDate,
+          cat: e.CategoryName, desc: e.Description, id: e.ExpenseID, _seq: idx,
+        }));
+        return [...incRows, ...expRows].sort((a, b) => {
+          const dateDiff = new Date(b.date) - new Date(a.date);
+          if (dateDiff !== 0) return dateDiff;
+          // Cùng ngày: _seq nhỏ hơn = server trả trước = ID cao hơn = mới hơn
+          return a._seq - b._seq;
+        });
+      }, [income, expenses]);
+
+      const WEEKS = ['Tất cả', 'Tuần 1 (1–7)', 'Tuần 2 (8–14)', 'Tuần 3 (15–21)', 'Tuần 4 (22–31)'];
+
+      const filtered = useMemo(() => {
+        let rows = weekIdx === 0 ? all : all.filter(tx => {
+          const d = new Date(tx.date).getDate();
+          return weekIdx === 1 ? d <= 7
+            : weekIdx === 2 ? d >= 8 && d <= 14
+              : weekIdx === 3 ? d >= 15 && d <= 21
+                : d >= 22;
+        });
+        if (typeFilter) rows = rows.filter(tx => tx.type === typeFilter);
+        if (catFilter) rows = rows.filter(tx => tx.cat === catFilter);
+        return rows;
+      }, [all, weekIdx, typeFilter, catFilter]);
+
+      const totInc = all.filter(t => t.type === 'inc').reduce((s, t) => s + Number(t.Amount), 0);
+      const totExp = all.filter(t => t.type === 'exp').reduce((s, t) => s + Number(t.Amount), 0);
+
+      // Xóa giao dịch — gọi API soft-delete, trigger cập nhật toàn app
+      const deleteTx = async (tx) => {
+        const endpoint = tx.type === 'inc'
+          ? `/income/${tx.id}`
+          : `/expenses/${tx.id}`;
+        const res = await api(endpoint, { method: 'DELETE' });
+        // FIX 3: phân biệt lỗi server vs thành công
+        if (isErr(res)) {
+          showToast(`❌ ${res?.detail || 'Không thể xóa — kiểm tra kết nối server'}`);
+          return;
+        }
+        showToast('✓ Đã xóa giao dịch');
+        setSel(null);
+        fetchData();
+        trigger(); // cập nhật header tổng tài sản + HomePage
+      };
+
+      return (
+        <div className="pg">
+          <MonthNav month={month} year={year} setMonth={setMonth} setYear={setYear} />
+
+          {/* ── Tổng thu / chi / số giao dịch ── */}
+          <div className="card" style={{ padding: '9px 0', marginBottom: 10 }}>
+            <div className="sum3">
+              <div className="sum3-item">
+                <div className="sum3-lbl">Thu vào</div>
+                <div className="sum3-val inc">{fmts(totInc)}</div>
+              </div>
+              <div className="sum3-item">
+                <div className="sum3-lbl">Chi ra</div>
+                <div className="sum3-val expc">{fmts(totExp)}</div>
+              </div>
+              <div className="sum3-item">
+                <div className="sum3-lbl">Giao dịch</div>
+                <div className="sum3-val">{all.length}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Bộ lọc loại giao dịch ── */}
+          <div className="wtabs" style={{ marginBottom: 6 }}>
+            {[['', 'Tất cả'], ['inc', '↑ Thu nhập'], ['exp', '↓ Chi tiêu']].map(([v, l]) => (
+              <div key={v} className={`wtab ${typeFilter === v ? 'on' : ''}`}
+                onClick={() => { setTypeFilter(v); setCatFilter(''); }}>
+                {l}
+              </div>
+            ))}
+          </div>
+
+          {/* ── Bộ lọc danh mục (chỉ hiện khi lọc chi tiêu) ── */}
+          {typeFilter === 'exp' && cats.length > 0 && (
+            <div className="wtabs" style={{ marginBottom: 6 }}>
+              <div className={`wtab ${catFilter === '' ? 'on' : ''}`}
+                onClick={() => setCatFilter('')}>Tất cả</div>
+              {cats.map(c => (
+                <div key={c.CategoryID}
+                  className={`wtab ${catFilter === c.CategoryName ? 'on' : ''}`}
+                  onClick={() => setCatFilter(c.CategoryName)}>
+                  {CAT_EMOJI[c.CategoryName] || '•'} {c.CategoryName}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* ── Bộ lọc tuần ── */}
+          <div className="wtabs">
+            {WEEKS.map((w, i) => (
+              <div
+                key={i}
+                className={`wtab ${weekIdx === i ? 'on' : ''}`}
+                onClick={() => setWeekIdx(i)}
+              >
+                {w}
+              </div>
+            ))}
+          </div>
+
+          {/* ── Danh sách giao dịch ── */}
+          {load
+            ? <div className="loader"><div className="spin" /><p>Đang tải...</p></div>
+            : (
+              <div className="card">
+                {filtered.length === 0 && (
+                  <div className="empty">
+                    <div className="empty-ico">📭</div>
+                    Không có giao dịch
+                  </div>
+                )}
+                <div className="txl">
+                  {filtered.map(tx => (
+                    <div
+                      key={tx.type + tx.id}
+                      className="txi"
+                      onClick={() => setSel(tx)}
+                    >
+                      <div className="txicon"
+                        style={{ background: tx.type === 'inc' ? '#e6f7ec' : '#fef2f2' }}>
+                        {CAT_EMOJI[tx.cat] || '💳'}
+                      </div>
+                      <div className="tinfo">
+                        <div className="tdesc">{tx.desc || tx.cat}</div>
+                        <div className="tmeta">{tx.cat} · {tx.date}</div>
+                      </div>
+                      <div className={`tamt ${tx.type === 'inc' ? 'inc' : 'expc'}`}>
+                        {tx.type === 'inc' ? '+' : '-'}{fmts(tx.Amount)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          }
+
+          {/* ── Popup chi tiết + nút Xóa / Đóng ── */}
+          {sel && (
+            <div
+              className="ov"
+              onClick={e => { if (e.target.className === 'ov') setSel(null); }}
+            >
+              <div className="pop">
+                <div className="pop-hdl" />
+
+                {/* Icon + số tiền + mô tả */}
+                <div style={{ textAlign: 'center', marginBottom: 18 }}>
+                  <div style={{ fontSize: 44, marginBottom: 10 }}>
+                    {CAT_EMOJI[sel.cat] || '💳'}
+                  </div>
+                  <div style={{
+                    fontSize: 26, fontWeight: 800, letterSpacing: -1,
+                    color: sel.type === 'inc' ? '#16a34a' : '#e84848',
+                  }}>
+                    {sel.type === 'inc' ? '+' : '-'}{fmt(sel.Amount)}
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--txt2)', marginTop: 5 }}>
+                    {sel.desc || sel.cat}
+                  </div>
+                </div>
+
+                {/* Chi tiết giao dịch */}
+                <div style={{ background: '#f9fafb', borderRadius: 12, padding: '4px 14px' }}>
+                  {[
+                    ['Danh mục', sel.cat],
+                    ['Ngày', sel.date],
+                    ['Tài khoản', sel.BankName || '—'],
+                    ['Loại', sel.type === 'inc' ? 'Thu nhập' : 'Chi tiêu'],
+                  ].map(([k, v]) => (
+                    <div key={k} style={{
+                      display: 'flex', justifyContent: 'space-between',
+                      padding: '8px 0', fontSize: 12.5,
+                      borderBottom: '1px solid #f0f0f0',
+                    }}>
+                      <span style={{ color: 'var(--txt2)' }}>{k}</span>
+                      <span style={{ fontWeight: 600 }}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Nút Xóa + Đóng */}
+                <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+                  <button
+                    style={{
+                      flex: 1, padding: '11px',
+                      background: '#fef2f2', color: '#991b1b',
+                      border: '1px solid #fecaca', borderRadius: 9,
+                      fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      if (window.confirm(
+                        `Xóa "${sel.desc || sel.cat}" (${fmt(sel.Amount)})?`
+                      )) deleteTx(sel);
+                    }}
+                  >
+                    🗑 Xóa
+                  </button>
+                  <button
+                    style={{
+                      flex: 1, padding: '11px',
+                      background: '#f3f4f6', color: 'var(--txt)',
+                      border: 'none', borderRadius: 9,
+                      fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                    }}
+                    onClick={() => setSel(null)}
+                  >
+                    Đóng
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    /* ── PAGE 3: NHẬP LIỆU ── */
+    function AddPage({ g }) {
+      const { showToast, doRefresh } = g;
+      const [type, setType] = useState('expense');
+      const [amt, setAmt] = useState('');
+      const [catId, setCatId] = useState('');
+      const [accId, setAccId] = useState('');
+      const [desc, setDesc] = useState('');
+      const [date, setDate] = useState(today());
+      const [cats, setCats] = useState([]);
+      const [accs, setAccs] = useState([]);
+      const [saving, setSaving] = useState(false);
+      const [showAddCat, setShowAddCat] = useState(false);
+
+      const reloadCats = () => api('/categories').then(c => { if (!isErr(c)) setCats(c); });
+
+      useEffect(() => {
+        Promise.all([api('/categories'), api(`/accounts/${window.UID}?_t=${Date.now()}`)]).then(([c, a]) => {
+          setCats(isErr(c) ? MOCK_CATS : c);
+          const items = (!isErr(a) && a?.items) ? a.items : MOCK_ACC.items;
+          setAccs(items);
+          if (items.length) setAccId(items[0].AccountID);
+        });
+      }, []);
+
+      const submit = async () => {
+        if (!amt || isNaN(+amt) || +amt <= 0) { showToast('⚠️ Nhập số tiền hợp lệ'); return; }
+        if (type === 'expense' && !catId) { showToast('⚠️ Chọn danh mục'); return; }
+
+        // FIX 4: Validate số dư trước khi gửi lên server
+        if (type === 'expense') {
+          const selAcc = accs.find(a => a.AccountID === +accId);
+          if (selAcc && +amt > Number(selAcc.Balance)) {
+            showToast(`❌ Số dư ${fmts(selAcc.Balance)} không đủ để chi ${fmts(+amt)}`);
+            return;
+          }
+        }
+
+        setSaving(true);
+        let res;
+        if (type === 'income') {
+          res = await api('/income', { method: 'POST', body: JSON.stringify({ user_id: window.UID, amount: +amt, income_date: date, description: desc, account_id: +accId || 1 }) });
+        } else {
+          res = await api('/expenses', { method: 'POST', body: JSON.stringify({ user_id: window.UID, category_id: +catId, amount: +amt, expense_date: date, description: desc, account_id: +accId || 1 }) });
+        }
+        setSaving(false);
+
+        // FIX 3: Xử lý lỗi server rõ ràng thay vì im lặng
+        if (isErr(res)) {
+          showToast(`❌ ${res?.detail || 'Lỗi kết nối server'}`);
+          return;
+        }
+        showToast(type === 'income' ? '✓ Thêm thu nhập thành công!' : '✓ Thêm chi tiêu thành công!');
+        setAmt(''); setDesc(''); setCatId(''); setDate(today());
+        // Reload danh sách tài khoản để số dư mới nhất hiển thị ở select
+        api(`/accounts/${window.UID}?_t=${Date.now()}`).then(a => {
+          if (!isErr(a) && a?.items) setAccs(a.items);
+        });
+        doRefresh(); // ← kích hoạt reload dashboard + accounts + TxPage
+      };
+
+      return (
+        <div className="pg">
+          <div className="card">
+            <div style={{ textAlign: 'center', padding: '6px 0 16px' }}>
+              <div style={{ fontSize: 10, color: 'var(--txt3)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Số tiền giao dịch</div>
+              <input className="amtbig" type="number" inputMode="numeric" placeholder="0" value={amt} onChange={e => setAmt(e.target.value)} />
+              <div style={{ fontSize: 11, color: 'var(--txt3)', marginTop: 5 }}>VND — Việt Nam Đồng</div>
+            </div>
+            <div className="ttog">
+              <button className={`tbtn ${type === 'income' ? 'ti' : ''}`} onClick={() => setType('income')}>↑ Thu nhập</button>
+              <button className={`tbtn ${type === 'expense' ? 'te' : ''}`} onClick={() => setType('expense')}>↓ Chi tiêu</button>
+            </div>
+            {type === 'expense' && (
+              <div className="fgrp">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+                  <label className="flbl" style={{ margin: 0 }}>Danh mục (hũ)</label>
+                  <span
+                    style={{ fontSize: 10.5, color: 'var(--G)', cursor: 'pointer', fontWeight: 700 }}
+                    onClick={() => setShowAddCat(true)}>
+                    + Tạo mới
+                  </span>
+                </div>
+                <select className="fsel" value={catId} onChange={e => setCatId(e.target.value)}>
+                  <option value="">-- Chọn hũ --</option>
+                  {cats.map(c => <option key={c.CategoryID} value={c.CategoryID}>{CAT_EMOJI[c.CategoryName] || '•'} {c.CategoryName}</option>)}
+                </select>
+              </div>
+            )}
+            <div className="fgrp">
+              <label className="flbl">Nguồn tiền</label>
+              <select className="fsel" value={accId} onChange={e => setAccId(e.target.value)}>
+                {accs.length === 0 && <option value="">-- Chưa có tài khoản --</option>}
+                {accs.map(a => <option key={a.AccountID} value={a.AccountID}>🏦 {a.BankName} — {fmts(a.Balance)}</option>)}
+              </select>
+            </div>
+            <div className="fgrp">
+              <label className="flbl">Ngày giao dịch</label>
+              <input className="finp" type="date" value={date} onChange={e => setDate(e.target.value)} />
+            </div>
+            <div className="fgrp">
+              <label className="flbl">Ghi chú</label>
+              <input className="finp" type="text" placeholder="Thêm mô tả (tuỳ chọn)..." value={desc} onChange={e => setDesc(e.target.value)} />
+            </div>
+            <button className="sbtn" onClick={submit} disabled={saving}>
+              {saving ? 'Đang lưu...' : `${type === 'income' ? '💰 Thêm thu nhập' : '💸 Thêm chi tiêu'}`}
+            </button>
+          </div>
+
+          {/* Modal tạo danh mục mới ngay trong trang nhập liệu */}
+          {showAddCat && (
+            <AddCategoryModal
+              showToast={showToast}
+              onClose={() => setShowAddCat(false)}
+              onSaved={() => { reloadCats(); }}
+            />
+          )}
+        </div>
+      );
+    }
+
+    /* ── AddCategoryModal ── */
+    function AddCategoryModal({ onClose, onSaved, showToast }) {
+      const [name, setName] = useState('');
+      const [saving, setSaving] = useState(false);
+      const submit = async () => {
+        if (!name.trim()) { showToast('⚠️ Nhập tên danh mục'); return; }
+        setSaving(true);
+        const res = await api('/categories', { method: 'POST', body: JSON.stringify({ name: name.trim() }) });
+        setSaving(false);
+        if (isErr(res)) { showToast(`❌ ${res?.detail || 'Không thể thêm danh mục'}`); }
+        else { showToast('✓ Đã thêm danh mục'); onSaved(); onClose(); }
+      };
+      return (
+        <div className="modal-overlay" onClick={e => { if (e.target.className === 'modal-overlay') onClose(); }}>
+          <div className="modal-box">
+            <div className="modal-title">➕ Thêm danh mục mới</div>
+            <div className="fgrp">
+              <label className="flbl">Tên danh mục</label>
+              <input className="finp" autoFocus placeholder="VD: Du lịch, Quà tặng..." value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === 'Enter' && submit()} />
+            </div>
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={onClose}>Hủy</button>
+              <button className="btn-ok" onClick={submit} disabled={saving}>{saving ? '...' : 'Thêm'}</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    /* ── AddAccountModal ── */
+    function AddAccountModal({ onClose, onSaved, showToast }) {
+      const [bankName, setBankName] = useState('');
+      const [balance, setBalance] = useState('');
+      const [saving, setSaving] = useState(false);
+      const submit = async () => {
+        if (!bankName.trim()) { showToast('⚠️ Nhập tên tài khoản'); return; }
+        setSaving(true);
+        const res = await api('/accounts', {
+          method: 'POST',
+          body: JSON.stringify({ user_id: window.UID, bank_name: bankName.trim(), initial_balance: Number(balance) || 0 })
+        });
+        setSaving(false);
+        if (isErr(res)) { showToast(`❌ ${res?.detail || 'Không thể thêm tài khoản'}`); }
+        else { showToast('✓ Đã thêm tài khoản'); onSaved(); onClose(); }
+      };
+      return (
+        <div className="modal-overlay" onClick={e => { if (e.target.className === 'modal-overlay') onClose(); }}>
+          <div className="modal-box">
+            <div className="modal-title">🏦 Thêm tài khoản ngân hàng</div>
+            <div className="fgrp">
+              <label className="flbl">Tên ngân hàng / ví</label>
+              <input className="finp" autoFocus placeholder="VD: BIDV, ZaloPay, Tiền mặt..." value={bankName} onChange={e => setBankName(e.target.value)} />
+            </div>
+            <div className="fgrp">
+              <label className="flbl">Số dư ban đầu (₫)</label>
+              <input className="finp" type="number" inputMode="numeric" placeholder="0" value={balance} onChange={e => setBalance(e.target.value)} onKeyDown={e => e.key === 'Enter' && submit()} />
+            </div>
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={onClose}>Hủy</button>
+              <button className="btn-ok" onClick={submit} disabled={saving}>{saving ? '...' : 'Thêm'}</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    /* ── PAGE 4: NGÂN SÁCH ── */
+    function BudgetPage({ g }) {
+      const { month, year, setMonth, setYear, showToast, refresh, trigger } = g;
+
+      const [limits, setLimits] = useState({});   // { jarName: amount }
+      const [activeBudgets, setActiveBudgets] = useState([]);   // jarNames đang có budget
+      const [saving, setSaving] = useState(false);
+      const [deleting, setDeleting] = useState(null); // jarName đang xóa
+      const [dash, setDash] = useState(null);
+      const [cats, setCats] = useState([]);
+      const [load, setLoad] = useState(true);
+      const [showAddCat, setShowAddCat] = useState(false);
+      const [showAddBudget, setShowAddBudget] = useState(false);
+      const [catRefresh, setCatRefresh] = useState(0);
+      const [jarRows, setJarRows] = useState([]);
+
+      const fetchAll = () => {
+        setLoad(true);
+        Promise.all([
+          api(`/dashboard/${window.UID}?month=${month}&year=${year}&_t=${Date.now()}`),
+          api('/categories'),
+          api(`/budget/jars/${window.UID}?month=${month}&year=${year}&_t=${Date.now()}`),
+          api(`/budget/${window.UID}?month=${month}&year=${year}&_t=${Date.now()}`),
+        ]).then(([d, c, jRows, budRows]) => {
+          setDash(isErr(d) ? MOCK_DASH : d);
+          setCats(isErr(c) ? MOCK_CATS : c);
+
+          // Build limits map từ DB — áp dụng alias để gộp "Tiền nhà"/"Nhà cửa" → "Lưu trú"
+          if (!isErr(budRows) && Array.isArray(budRows)) {
+            const map = {};
+            const active = new Set();
+            budRows.forEach(r => {
+              if (!r.CategoryName) return;
+              const jar = resolveJar(r.CategoryName); // áp alias
+              map[jar] = (map[jar] || 0) + Number(r.LimitAmount);
+              active.add(jar);
+            });
+            setLimits(map);
+            setActiveBudgets([...active]);
+          }
+
+          if (!isErr(jRows) && Array.isArray(jRows)) setJarRows(jRows);
+          setLoad(false);
+        });
+      };
+
+      useEffect(() => { fetchAll(); }, [month, year, refresh, catRefresh]);
+
+      // ── save(): upsert chỉ những hũ đang active ──────────────────
+      const save = async () => {
+        setSaving(true);
+        try {
+          // FIX 1: Thêm _t=${Date.now()} để chống cache dữ liệu cũ
+          const existingRes = await api(`/budget/${window.UID}?month=${month}&year=${year}&_t=${Date.now()}`);
+          if (!isErr(existingRes) && Array.isArray(existingRes)) {
+            const toDelete = existingRes.filter(r => {
+              const jar = resolveJar(r.CategoryName);
+              return !activeBudgets.includes(jar) || Number(limits[jar] || 0) === 0;
+            });
+            await Promise.all(toDelete.map(r => api(`/budget/${r.BudgetID}`, { method: 'DELETE' })));
+          }
+
+          // FIX 2: Báo lỗi rõ ràng nếu Hũ chưa tồn tại trong Database
+          await Promise.all(
+            activeBudgets
+              .filter(jar => Number(limits[jar] || 0) > 0)
+              .map(jar => {
+                const cat = cats.find(c => c.CategoryName === jar || resolveJar(c.CategoryName) === jar);
+                if (!cat) {
+                  showToast(`⚠️ Lỗi: Hũ "${jar}" chưa có trong Database. Vui lòng tạo danh mục trước!`);
+                  return Promise.resolve();
+                }
+                return api('/budget', {
+                  method: 'POST',
+                  body: JSON.stringify({ user_id: window.UID, category_id: cat.CategoryID, limit_amount: Number(limits[jar]), month, year }),
+                });
+              })
+          );
+
+          // Reload từ DB
+          const [updBuds, newDash, newJars] = await Promise.all([
+            api(`/budget/${window.UID}?month=${month}&year=${year}&_t=${Date.now()}`),
+            api(`/dashboard/${window.UID}?month=${month}&year=${year}&_t=${Date.now()}`),
+            api(`/budget/jars/${window.UID}?month=${month}&year=${year}&_t=${Date.now()}`),
+          ]);
+
+          if (!isErr(updBuds) && Array.isArray(updBuds)) {
+            const map = {}; const active = new Set();
+            updBuds.forEach(r => { if (!r.CategoryName) return; const jar = resolveJar(r.CategoryName); map[jar] = (map[jar] || 0) + Number(r.LimitAmount); active.add(jar); });
+            setLimits(map); setActiveBudgets([...active]);
+          }
+          if (!isErr(newDash)) setDash(newDash);
+          if (!isErr(newJars) && Array.isArray(newJars)) setJarRows(newJars);
+
+          showToast('✓ Đã cập nhật hạn mức');
+          if (trigger) trigger();
+        } catch (error) {
+          showToast('❌ Có lỗi xảy ra khi lưu');
+        } finally {
+          setSaving(false);
+        }
+      };
+
+      // ── deleteBudget(): xóa ngay 1 hũ ───────────────────────────
+      const deleteBudget = async (jarName) => {
+        setDeleting(jarName);
+        const existingRes = await api(`/budget/${window.UID}?month=${month}&year=${year}&_t=${Date.now()}`);
+        if (!isErr(existingRes) && Array.isArray(existingRes)) {
+          const toDelete = existingRes.filter(r => resolveJar(r.CategoryName) === jarName);
+          await Promise.all(toDelete.map(r => api(`/budget/${r.BudgetID}`, { method: 'DELETE' })));
+        }
+        // Cập nhật state local
+        setActiveBudgets(prev => prev.filter(n => n !== jarName));
+        setLimits(prev => { const n = { ...prev }; delete n[jarName]; return n; });
+        // Reload jars + dashboard
+        const [newJars, newDash] = await Promise.all([
+          api(`/budget/jars/${window.UID}?month=${month}&year=${year}&_t=${Date.now()}`),
+          api(`/dashboard/${window.UID}?month=${month}&year=${year}&_t=${Date.now()}`),
+        ]);
+        if (!isErr(newJars) && Array.isArray(newJars)) setJarRows(newJars);
+        if (!isErr(newDash)) setDash(newDash);
+        setDeleting(null);
+        showToast(`🗑 Đã xóa hạn mức "${jarName}"`);
+        if (trigger) trigger();
+      };
+
+      // ── addBudget(): thêm hũ từ danh sách chưa có budget ────────
+      const addBudget = (jarName) => {
+        if (activeBudgets.length >= JAR_MAX) { showToast(`⚠️ Tối đa ${JAR_MAX} hạn mức`); return; }
+        if (activeBudgets.includes(jarName)) { showToast('Hũ này đã có hạn mức'); return; }
+        setActiveBudgets(prev => [...prev, jarName]);
+        setShowAddBudget(false);
+      };
+
+      const getCatSpent = name => {
+        const jar = jarRows.find(r => r.name === name);
+        if (jar) return Number(jar.spent || 0);
+        const row = dash?.expenses_by_category?.find(r => resolveJar(r.CategoryName) === name);
+        return Number(row?.TotalSpent || 0);
+      };
+
+      const bud = dash?.budget || {};
+      const bC = bud.status === 'OK' ? 'b-ok' : bud.status === 'WARNING' ? 'b-warn' : 'b-over';
+      const barCol = bud.status === 'OK' ? '#5a9e62' : bud.status === 'WARNING' ? '#f59e0b' : '#e84848';
+
+      // Danh sách hũ chưa có budget (để modal "Thêm" hiển thị)
+      const availableJars = [
+        ...JAR_NAMES,
+        ...cats.map(c => resolveJar(c.CategoryName)).filter(n => !JAR_NAMES.includes(n)),
+      ].filter(n => !activeBudgets.includes(n));
+
+      return (
+        <div className="pg">
+          <MonthNav month={month} year={year} setMonth={setMonth} setYear={setYear} />
+
+          {/* ── Trạng thái tổng tháng ── */}
+          <div className="card">
+            <div className="card-hd">
+              <span className="card-t">Trạng thái tháng này</span>
+              <span className={`badge ${bC}`}>
+                {bud.status === 'OK' ? '✅ Tốt' : bud.status === 'WARNING' ? '⚠️ Cẩn thận' : '🚨 Vượt'}
+              </span>
+            </div>
+            <div className="bbar">
+              <div className="bfill" style={{ width: `${Math.min(100, bud.ratio || 0)}%`, background: barCol }} />
+            </div>
+            <div className="brow">
+              <span style={{ fontSize: 10.5, color: 'var(--txt2)' }}>Chi: {fmt(bud.expense)}</span>
+              <span style={{ fontSize: 10.5, color: 'var(--txt2)' }}>{Math.round(bud.ratio || 0)}%</span>
+              <span style={{ fontSize: 10.5, color: 'var(--txt2)' }}>Thu: {fmt(bud.income)}</span>
+            </div>
+          </div>
+
+          {/* ── Hạn mức từng danh mục ── */}
+          <div className="card">
+            <div className="card-hd">
+              <span className="card-t">Hạn mức danh mục
+                <span style={{ fontSize: 10, color: 'var(--txt3)', fontWeight: 400, marginLeft: 6 }}>
+                  ({activeBudgets.length}/{JAR_MAX})
+                </span>
+              </span>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                {/* Nút thêm hũ budget mới */}
+                {activeBudgets.length < JAR_MAX && (
+                  <button className="add-fab" onClick={() => setShowAddBudget(true)}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Thêm hũ
+                  </button>
+                )}
+                <button
+                  style={{ fontSize: 11.5, color: saving ? 'var(--txt3)' : 'var(--G)', background: 'none', border: 'none', cursor: saving ? 'not-allowed' : 'pointer', fontWeight: 700 }}
+                  onClick={save} disabled={saving}>
+                  {saving ? 'Đang lưu...' : 'Lưu tất cả'}
+                </button>
+              </div>
+            </div>
+
+            {load ? <div className="loader"><div className="spin" /></div>
+              : activeBudgets.length === 0
+                ? <div className="empty"><div className="empty-ico">🪣</div>Chưa có hạn mức nào. Nhấn "+ Thêm hũ" để bắt đầu.</div>
+                : activeBudgets.map(name => {
+                  const lim = Number(limits[name] || 0);
+                  const spent = getCatSpent(name);
+                  const pct = lim > 0 ? Math.min(100, (spent / lim) * 100) : 0;
+                  const over = lim > 0 && spent > lim;
+                  const barC = over ? '#e84848' : lim > 0 && spent > lim * 0.7 ? '#f59e0b' : '#5a9e62';
+                  const isDel = deleting === name;
+
+                  return (
+                    <div key={name} style={{ marginBottom: 14, padding: '10px 12px', background: '#fafafa', borderRadius: 10, border: '1px solid var(--border)', position: 'relative' }}>
+                      {/* Header hũ: tên + spent/limit + nút xóa */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                        <span style={{ fontSize: 12.5, fontWeight: 700 }}>
+                          {CAT_EMOJI[name] || '🏷️'} {name}
+                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ fontSize: 10.5, color: over ? '#e84848' : 'var(--txt2)' }}>
+                            {fmt(spent)} / {lim > 0 ? fmt(lim) : '—'}{over && ' 🚨'}
+                          </span>
+                          {/* Nút xóa hũ */}
+                          <button
+                            onClick={() => deleteBudget(name)}
+                            disabled={isDel}
+                            title="Xóa hạn mức này"
+                            style={{ background: 'none', border: 'none', cursor: isDel ? 'not-allowed' : 'pointer', color: isDel ? 'var(--txt3)' : '#e84848', fontSize: 15, lineHeight: 1, padding: '2px 4px', borderRadius: 5, transition: 'background .15s' }}>
+                            {isDel ? '…' : '×'}
+                          </button>
+                        </div>
+                      </div>
+
+                      {lim > 0 && (
+                        <div className="bbar" style={{ margin: '0 0 6px' }}>
+                          <div className="bfill" style={{ width: `${pct}%`, background: barC }} />
+                        </div>
+                      )}
+
+                      <input
+                        type="number" inputMode="numeric"
+                        placeholder={`Nhập hạn mức (₫)`}
+                        style={{ width: '100%', padding: '6px 10px', border: '1.5px solid var(--border)', borderRadius: 7, fontSize: 12, color: 'var(--txt)', background: '#fff', outline: 'none' }}
+                        value={limits[name] || ''}
+                        onChange={e => setLimits(l => ({ ...l, [name]: e.target.value }))}
+                        onWheel={(e) => e.currentTarget.blur()}
+                      />
+                    </div>
+                  );
+                })
+            }
+          </div>
+
+          {/* ── Ghi chú danh mục mới ── */}
+          <div style={{ textAlign: 'center', marginTop: -4, marginBottom: 6 }}>
+            <span
+              style={{ fontSize: 11, color: 'var(--G)', cursor: 'pointer', fontWeight: 600 }}
+              onClick={() => setShowAddCat(true)}>
+              + Tạo danh mục chi tiêu mới
+            </span>
+            <span style={{ fontSize: 10, color: 'var(--txt3)', marginLeft: 6 }}>(dùng khi nhập giao dịch)</span>
+          </div>
+
+          {/* ── Modal chọn hũ để thêm budget ── */}
+          {showAddBudget && (
+            <div className="modal-overlay" onClick={e => { if (e.target.className === 'modal-overlay') setShowAddBudget(false); }}>
+              <div className="modal-box">
+                <div className="modal-title">🪣 Chọn hũ để thêm hạn mức</div>
+                {availableJars.length === 0
+                  ? <div style={{ color: 'var(--txt2)', fontSize: 13, textAlign: 'center', padding: '12px 0' }}>
+                    Tất cả danh mục đã có hạn mức.
+                  </div>
+                  : availableJars.map(name => (
+                    <button key={name}
+                      onClick={() => addBudget(name)}
+                      style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 14px', marginBottom: 6, background: '#f8faf8', border: '1.5px solid var(--border)', borderRadius: 9, cursor: 'pointer', fontSize: 13, fontWeight: 600, color: 'var(--txt)', transition: 'background .15s' }}>
+                      {CAT_EMOJI[name] || '🏷️'} {name}
+                    </button>
+                  ))
+                }
+                <div className="modal-actions">
+                  <button className="btn-cancel" onClick={() => setShowAddBudget(false)}>Đóng</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Modal thêm danh mục chi tiêu mới ── */}
+          {showAddCat && (
+            <AddCategoryModal
+              showToast={showToast}
+              onClose={() => setShowAddCat(false)}
+              onSaved={() => setCatRefresh(r => r + 1)}
+            />
+          )}
+        </div>
+      );
+    }
+
+    /* ── PAGE 5: VÍ CỦA TÔI ── */
+    function AccountPage({ g }) {
+      const { month, year, setMonth, setYear, refresh } = g;
+      const [accs, setAccs] = useState([]);
+      const [hist, setHist] = useState([]);
+      const [load, setLoad] = useState(true);
+      const [selAcc, setSelAcc] = useState(null);
+      const [showForm, setShowForm] = useState(false);
+      const [editId, setEditId] = useState(null);
+      const [newBank, setNewBank] = useState('');
+      const [newBal, setNewBal] = useState('');
+      const [saving, setSaving] = useState(false);
+
+      const fetchAccounts = () =>
+        api(`/accounts/${window.UID}`).then(a => setAccs(a?.items || MOCK_ACC.items));
+
+      useEffect(() => {
+        setLoad(true);
+        Promise.all([
+          api(`/accounts/${window.UID}`),
+          api(`/income?user_id=${window.UID}&month=${month}&year=${year}`),
+          api(`/expenses?user_id=${window.UID}&month=${month}&year=${year}`)
+        ]).then(([a, inc, exp]) => {
+          setAccs((a?.items) || MOCK_ACC.items);
+          const all = [
+            ...(inc || MOCK_INC).map(i => ({ ...i, type: 'inc', date: i.IncomeDate, cat: 'Thu nhập', desc: i.Description })),
+            ...(exp || MOCK_EXP).map(e => ({ ...e, type: 'exp', date: e.ExpenseDate, cat: e.CategoryName, desc: e.Description })),
+          ].sort((a, b) => new Date(b.date) - new Date(a.date));
+          setHist(all);
+          setLoad(false);
+        });
+      }, [month, year, refresh]); // ← thêm refresh để cập nhật khi nhập liệu
+
+      const submitAccount = async () => {
+        if (!newBank.trim()) { g.showToast('⚠️ Nhập tên tài khoản'); return; }
+        setSaving(true);
+        let res;
+        if (editId) {
+          res = await api(`/accounts/${editId}`, { method: 'PUT', body: JSON.stringify({ bank_name: newBank }) });
+        } else {
+          res = await api('/accounts', {
+            method: 'POST',
+            body: JSON.stringify({ user_id: window.UID, bank_name: newBank, initial_balance: +newBal || 0 })
+          });
+        }
+        setSaving(false);
+        if (isErr(res)) {
+          g.showToast(`❌ ${res?.detail || 'Lỗi kết nối server'}`);
+        } else {
+          g.showToast(editId ? '✓ Đã cập nhật tài khoản' : '✓ Đã thêm tài khoản');
+          setShowForm(false); setNewBank(''); setNewBal(''); setEditId(null);
+          fetchAccounts();
+          g.trigger();
+        }
+      };
+
+      const totalBal = accs.reduce((s, a) => s + Number(a.Balance || 0), 0);
+      const filteredHist = selAcc ? hist.filter(t => t.AccountID === selAcc) : hist;
+
+      return (
+        <div className="pg">
+          <MonthNav month={month} year={year} setMonth={setMonth} setYear={setYear} />
+
+          {/* Tổng tài sản */}
+          <div style={{ background: 'linear-gradient(135deg,#2d6a36 0%,#5a9e62 100%)', borderRadius: 18, padding: '18px 18px 16px', marginBottom: 10, color: '#fff', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', right: -15, top: -15, width: 90, height: 90, borderRadius: '50%', background: 'rgba(255,255,255,.08)' }} />
+            <div style={{ fontSize: 10, opacity: .75, textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 4 }}>Tổng tài sản</div>
+            <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: -1.5, marginBottom: 2 }}>{fmtFull(totalBal)}</div>
+            <div style={{ fontSize: 10.5, opacity: .7 }}>{accs.length} tài khoản · {new Date().toLocaleDateString('vi-VN')}</div>
+          </div>
+
+          {/* Danh sách tài khoản */}
+          <div className="card">
+            <div className="card-hd">
+              <span className="card-t">Tài khoản của tôi</span>
+              <button onClick={() => { setShowForm(v => !v); setEditId(null); setNewBank(''); setNewBal(''); }}
+                style={{ fontSize: 11.5, color: 'var(--G)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700 }}>
+                {showForm && !editId ? '✕ Đóng' : '+ Thêm'}
+              </button>
+            </div>
+
+            {/* Form thêm / sửa tài khoản */}
+            {showForm && (
+              <div style={{ background: '#f9fafb', borderRadius: 10, padding: 12, marginBottom: 12 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8, color: 'var(--txt2)' }}>
+                  {editId ? 'Sửa tài khoản' : 'Thêm tài khoản mới'}
+                </div>
+                <input className="finp" placeholder="Tên ngân hàng / ví (Vietcombank, Momo...)"
+                  value={newBank} onChange={e => setNewBank(e.target.value)}
+                  style={{ marginBottom: 8 }} />
+                {!editId && (
+                  <input className="finp" type="number" inputMode="numeric"
+                    placeholder="Số dư ban đầu (₫) — mặc định 0"
+                    value={newBal} onChange={e => setNewBal(e.target.value)}
+                    style={{ marginBottom: 8 }} />
+                )}
+                <button className="sbtn" onClick={submitAccount} disabled={saving}>
+                  {saving ? 'Đang lưu...' : (editId ? '💾 Lưu thay đổi' : '🏦 Tạo tài khoản')}
+                </button>
+              </div>
+            )}
+
+            {load ? <div className="loader"><div className="spin" /></div> : accs.map(a => (
+              <div key={a.AccountID}
+                onClick={() => setSelAcc(selAcc === a.AccountID ? null : a.AccountID)}
+                style={{ background: selAcc === a.AccountID ? 'linear-gradient(135deg,#3d7a46,#5a9e62)' : 'linear-gradient(135deg,#4a8c52,#7ec489)', borderRadius: 13, padding: '14px 16px', color: '#fff', cursor: 'pointer', marginBottom: 10, border: selAcc === a.AccountID ? '2px solid #fff' : '2px solid transparent' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <div style={{ fontSize: 9.5, opacity: .75, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 5 }}>🏦 {a.BankName}</div>
+                    <div style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.8 }}>{fmtFull(a.Balance)}</div>
+                  </div>
+                  {/* Nút sửa tên tài khoản */}
+                  <button
+                    onClick={e => {
+                      e.stopPropagation();
+                      setEditId(a.AccountID);
+                      setNewBank(a.BankName);
+                      setShowForm(true);
+                    }}
+                    style={{ background: 'rgba(255,255,255,.2)', border: 'none', borderRadius: 6, padding: '4px 8px', color: '#fff', fontSize: 11, cursor: 'pointer' }}>
+                    ✏️ Sửa
+                  </button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
+                  <span style={{ fontSize: 9.5, opacity: .65 }}>ID #{a.AccountID}</span>
+                  <span style={{ fontSize: 9.5, opacity: .65, background: 'rgba(255,255,255,.2)', padding: '2px 8px', borderRadius: 20 }}>
+                    {selAcc === a.AccountID ? 'Đang lọc ✓' : 'Lọc GD'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Lịch sử giao dịch */}
+          <div className="card">
+            <div className="card-hd">
+              <span className="card-t">{selAcc ? `Tài khoản #${selAcc}` : 'Tất cả giao dịch'}</span>
+              {selAcc && <span className="link" onClick={() => setSelAcc(null)}>Bỏ lọc</span>}
+            </div>
+            {load ? <div className="loader"><div className="spin" /></div> : (
+              <>
+                {filteredHist.length === 0 && <div className="empty"><div className="empty-ico">📭</div>Không có giao dịch</div>}
+                <div className="txl">
+                  {filteredHist.slice(0, 20).map((tx, i) => (
+                    <div key={i} className="txi">
+                      <div className="txicon" style={{ background: tx.type === 'inc' ? '#e6f7ec' : '#fef2f2' }}>
+                        {CAT_EMOJI[tx.cat] || '💳'}
+                      </div>
+                      <div className="tinfo">
+                        <div className="tdesc">{tx.desc || tx.cat}</div>
+                        <div className="tmeta">{tx.cat} · {tx.date} · {tx.BankName || '—'}</div>
+                      </div>
+                      <div className={`tamt ${tx.type === 'inc' ? 'inc' : 'expc'}`}>
+                        {tx.type === 'inc' ? '+' : '-'}{fmtShort(tx.Amount)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {filteredHist.length > 20 && (
+                  <div style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--txt3)', paddingTop: 10 }}>
+                    Còn {filteredHist.length - 20} giao dịch khác
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Thống kê tháng */}
+          <div className="card">
+            <div className="card-hd"><span className="card-t">Thống kê tháng</span></div>
+            <div className="sum3" style={{ padding: '6px 0' }}>
+              <div className="sum3-item">
+                <div className="sum3-lbl">Thu vào</div>
+                <div className="sum3-val inc">{fmtShort(filteredHist.filter(t => t.type === 'inc').reduce((s, t) => s + Number(t.Amount), 0))}</div>
+              </div>
+              <div className="sum3-item">
+                <div className="sum3-lbl">Chi ra</div>
+                <div className="sum3-val expc">{fmtShort(filteredHist.filter(t => t.type === 'exp').reduce((s, t) => s + Number(t.Amount), 0))}</div>
+              </div>
+              <div className="sum3-item">
+                <div className="sum3-lbl">Giao dịch</div>
+                <div className="sum3-val">{filteredHist.length}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    /* ── APP SHELL ── */
+    const NAVS = [
+      { lbl: 'Tổng quan', svg: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" /><path d="M9 21V12h6v9" /></svg> },
+      { lbl: 'Giao dịch', svg: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><circle cx="3" cy="6" r="1" fill="currentColor" /><circle cx="3" cy="12" r="1" fill="currentColor" /><circle cx="3" cy="18" r="1" fill="currentColor" /></svg> },
+      { lbl: 'Nhập liệu', svg: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" /></svg> },
+      { lbl: 'Ngân sách', svg: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8m-4-4v4" /><path d="M7 10h2m2 0h2m2 0h2" /></svg> },
+      { lbl: 'Ví của tôi', svg: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /><circle cx="16" cy="15" r="1" fill="currentColor" /></svg> },
+    ];
+
+    // ── Component Auth (Đăng nhập + Đăng ký) ──
+    function AuthPage({ onLogin }) {
+      const [tab, setTab] = useState('login'); // 'login' | 'register'
+
+      // Trạng thái đăng nhập
+      const [loginEmail, setLoginEmail] = useState('');
+      const [loginPw, setLoginPw] = useState('');
+      const [loginLoading, setLoginLoading] = useState(false);
+      const [loginErr, setLoginErr] = useState('');
+
+      // Trạng thái đăng ký
+      const [regName, setRegName] = useState('');
+      const [regEmail, setRegEmail] = useState('');
+      const [regPhone, setRegPhone] = useState('');
+      const [regPw, setRegPw] = useState('');
+      const [regPw2, setRegPw2] = useState('');
+      const [regLoading, setRegLoading] = useState(false);
+      const [regErr, setRegErr] = useState('');
+      const [regOk, setRegOk] = useState('');
+
+      const handleLogin = async () => {
+        setLoginErr('');
+        if (!loginEmail.trim()) { setLoginErr('Vui lòng nhập Email'); return; }
+        if (!loginPw) { setLoginErr('Vui lòng nhập mật khẩu'); return; }
+        setLoginLoading(true);
+        const res = await api('/login', {
+          method: 'POST',
+          body: JSON.stringify({ email: loginEmail.trim(), password: loginPw })
+        });
+        setLoginLoading(false);
+        if (isErr(res)) {
+          setLoginErr(res.detail || 'Đăng nhập thất bại — kiểm tra email / mật khẩu');
+        } else {
+          onLogin(res);
+        }
+      };
+
+      const handleRegister = async () => {
+        setRegErr(''); setRegOk('');
+        if (!regName.trim()) { setRegErr('Vui lòng nhập họ tên'); return; }
+        if (!regEmail.trim() || !regEmail.includes('@')) { setRegErr('Email không hợp lệ'); return; }
+        if (regPw.length < 6) { setRegErr('Mật khẩu tối thiểu 6 ký tự'); return; }
+        if (regPw !== regPw2) { setRegErr('Mật khẩu xác nhận không khớp'); return; }
+        setRegLoading(true);
+        const res = await api('/register', {
+          method: 'POST',
+          body: JSON.stringify({ username: regName.trim(), email: regEmail.trim(), phone: regPhone.trim(), password: regPw })
+        });
+        setRegLoading(false);
+        if (isErr(res)) {
+          setRegErr(res.detail || 'Đăng ký thất bại');
+        } else {
+          setRegOk('🎉 Đăng ký thành công! Hãy đăng nhập ngay.');
+          setRegName(''); setRegEmail(''); setRegPhone(''); setRegPw(''); setRegPw2('');
+          setTimeout(() => { setTab('login'); setLoginEmail(regEmail.trim()); setRegOk(''); }, 1800);
+        }
+      };
+
+      const inputStyle = { width: '100%', padding: '10px 13px', border: '1.5px solid var(--border)', borderRadius: 10, fontSize: 13.5, background: '#fbfdfc', color: 'var(--txt)', outline: 'none', marginBottom: 10, boxSizing: 'border-box' };
+      const errStyle = { background: '#fff0f0', border: '1px solid #fecaca', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: '#991b1b', marginBottom: 12 };
+      const okStyle = { background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: '#166534', marginBottom: 12 };
+
+      return (
+        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '20px 16px', background: 'linear-gradient(145deg, #123d30 0%, #25694e 55%, #47a371 100%)' }}>
+
+          {/* Logo */}
+          <div style={{ textAlign: 'center', marginBottom: 24 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 26, fontWeight: 800, color: '#fff', marginBottom: 4 }}>
+              <div style={{ width: 9, height: 9, background: '#fff', borderRadius: '50%', opacity: .6 }} />MoneyMate
+            </div>
+            <div style={{ fontSize: 12, color: 'rgba(255,255,255,.65)' }}>Quản lý tài chính cá nhân</div>
+          </div>
+
+          {/* Card */}
+          <div style={{ background: '#fff', borderRadius: 20, padding: '24px 20px', boxShadow: '0 24px 60px rgba(0,0,0,.25)', maxWidth: 400, margin: '0 auto', width: '100%' }}>
+
+            {/* Tab switcher */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: 22, background: '#f3f7f5', borderRadius: 12, padding: 4 }}>
+              {[['login', '🔑 Đăng nhập'], ['register', '✏️ Đăng ký']].map(([key, label]) => (
+                <button key={key} onClick={() => { setTab(key); setLoginErr(''); setRegErr(''); setRegOk(''); }}
+                  style={{ padding: '8px 6px', border: 'none', borderRadius: 9, fontSize: 12.5, fontWeight: 700, cursor: 'pointer', transition: 'all .2s',
+                    background: tab === key ? '#fff' : 'transparent',
+                    color: tab === key ? 'var(--G)' : 'var(--txt2)',
+                    boxShadow: tab === key ? '0 2px 8px rgba(0,0,0,.08)' : 'none' }}>
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {/* ── FORM ĐĂNG NHẬP ── */}
+            {tab === 'login' && (
+              <div>
+                {loginErr && <div style={errStyle}>⚠️ {loginErr}</div>}
+                <label style={{ fontSize: 10.5, color: 'var(--txt2)', fontWeight: 700, letterSpacing: .5, textTransform: 'uppercase', marginBottom: 5, display: 'block' }}>Email</label>
+                <input style={inputStyle} type="email" placeholder="your@email.com"
+                  value={loginEmail} onChange={e => setLoginEmail(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleLogin()} />
+                <label style={{ fontSize: 10.5, color: 'var(--txt2)', fontWeight: 700, letterSpacing: .5, textTransform: 'uppercase', marginBottom: 5, display: 'block' }}>Mật khẩu</label>
+                <input style={inputStyle} type="password" placeholder="••••••••"
+                  value={loginPw} onChange={e => setLoginPw(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleLogin()} />
+                <button className="sbtn" onClick={handleLogin} disabled={loginLoading} style={{ marginTop: 4 }}>
+                  {loginLoading ? 'Đang xác thực...' : '🔑 Đăng nhập'}
+                </button>
+                <div style={{ textAlign: 'center', marginTop: 14, fontSize: 11.5, color: 'var(--txt3)' }}>
+                  Chưa có tài khoản?{' '}
+                  <span onClick={() => setTab('register')} style={{ color: 'var(--G)', fontWeight: 700, cursor: 'pointer' }}>Đăng ký ngay</span>
+                </div>
+              </div>
+            )}
+
+            {/* ── FORM ĐĂNG KÝ ── */}
+            {tab === 'register' && (
+              <div>
+                {regErr && <div style={errStyle}>⚠️ {regErr}</div>}
+                {regOk && <div style={okStyle}>{regOk}</div>}
+                <label style={{ fontSize: 10.5, color: 'var(--txt2)', fontWeight: 700, letterSpacing: .5, textTransform: 'uppercase', marginBottom: 5, display: 'block' }}>Họ và tên *</label>
+                <input style={inputStyle} type="text" placeholder="Nguyễn Văn An"
+                  value={regName} onChange={e => setRegName(e.target.value)} />
+                <label style={{ fontSize: 10.5, color: 'var(--txt2)', fontWeight: 700, letterSpacing: .5, textTransform: 'uppercase', marginBottom: 5, display: 'block' }}>Email *</label>
+                <input style={inputStyle} type="email" placeholder="your@email.com"
+                  value={regEmail} onChange={e => setRegEmail(e.target.value)} />
+                <label style={{ fontSize: 10.5, color: 'var(--txt2)', fontWeight: 700, letterSpacing: .5, textTransform: 'uppercase', marginBottom: 5, display: 'block' }}>Số điện thoại <span style={{ fontWeight: 400, color: 'var(--txt3)' }}>(tuỳ chọn)</span></label>
+                <input style={inputStyle} type="tel" placeholder="0901234567"
+                  value={regPhone} onChange={e => setRegPhone(e.target.value)} />
+                <label style={{ fontSize: 10.5, color: 'var(--txt2)', fontWeight: 700, letterSpacing: .5, textTransform: 'uppercase', marginBottom: 5, display: 'block' }}>Mật khẩu * <span style={{ fontWeight: 400, color: 'var(--txt3)' }}>(tối thiểu 6 ký tự)</span></label>
+                <input style={inputStyle} type="password" placeholder="••••••••"
+                  value={regPw} onChange={e => setRegPw(e.target.value)} />
+                <label style={{ fontSize: 10.5, color: 'var(--txt2)', fontWeight: 700, letterSpacing: .5, textTransform: 'uppercase', marginBottom: 5, display: 'block' }}>Xác nhận mật khẩu *</label>
+                <input style={inputStyle} type="password" placeholder="••••••••"
+                  value={regPw2} onChange={e => setRegPw2(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleRegister()} />
+                <button className="sbtn" onClick={handleRegister} disabled={regLoading} style={{ marginTop: 4 }}>
+                  {regLoading ? 'Đang tạo tài khoản...' : '✏️ Tạo tài khoản'}
+                </button>
+                <div style={{ textAlign: 'center', marginTop: 14, fontSize: 11.5, color: 'var(--txt3)' }}>
+                  Đã có tài khoản?{' '}
+                  <span onClick={() => setTab('login')} style={{ color: 'var(--G)', fontWeight: 700, cursor: 'pointer' }}>Đăng nhập</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+    // ── App Shell (đã cập nhật hỗ trợ multi-user) ──
+    function App() {
+      const [user, setUser] = useState(() => {
+        try { return JSON.parse(localStorage.getItem('mm_user')); } catch { return null; }
+      });
+      const [page, setPage] = useState(0);
+      const g = useGlobal();
+
+      // Nếu chưa đăng nhập → hiện trang Login
+      if (!user) {
+        return <AuthPage onLogin={(u) => {
+          localStorage.setItem('mm_user', JSON.stringify(u));
+          window.UID = u.UserID;
+          setUser(u);
+        }} />;
+      }
+
+      // Gán UID động theo user đăng nhập
+      window.UID = user.UserID;
+
+      const handleLogout = () => {
+        localStorage.removeItem('mm_user');
+        window.UID = null;
+        setUser(null);
+      };
+
+      useEffect(() => {
+        if (!window.UID) return;
+        api(`/accounts/${window.UID}`).then(a => g.setTotalBal((!isErr(a) && a?.total) ? a.total : 0));
+      }, [g.refresh, user]);
+
+      const pages = [
+        <HomePage g={g} onNav={setPage} />,
+        <TxPage g={g} />,
+        <AddPage g={g} />,
+        <BudgetPage g={g} />,
+        <AccountPage g={g} />,
+      ];
+
+      return (
+        <div className="shell">
+          <div className="hdr">
+            <div className="hdr-top">
+              <div className="logo"><div className="logo-dot" />MoneyMate</div>
+              <div className="hdr-right">
+                <button onClick={handleLogout} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff', padding: '4px 10px', borderRadius: 8, fontSize: 11, cursor: 'pointer', fontWeight: 600, marginBottom: 4 }}>
+                  Đăng xuất
+                </button>
+                <div className="hdr-lbl">Tổng tài sản</div>
+                <div className="hdr-bal">{fmt(g.totalBal)}</div>
+              </div>
+            </div>
+            <div className="hdr-greet">Xin chào, {user.UserName} 👋 — {new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'numeric' })}</div>
+          </div>
+          <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+            {pages[page]}
+          </div>
+          <div className="bnav">
+            {NAVS.map((n, i) => (
+              <button key={i} className={`nb ${page === i ? 'on' : ''}`} onClick={() => setPage(i)}>
+                {n.svg}<span>{n.lbl}</span>
+              </button>
+            ))}
+          </div>
+          {g.toast && <Toast msg={g.toast} />}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+
+</html>
